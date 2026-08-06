@@ -1,0 +1,24 @@
+---
+/** Cifra grande de la barra de estadísticas. */
+import type { Stat } from '@/types';
+
+interface Props {
+  stat: Stat;
+  class?: string;
+}
+
+const { stat, class: className } = Astro.props;
+---
+
+<div
+  class:list={['relative flex flex-col gap-1.5 py-6 sm:py-8', className]}
+  data-reveal="up"
+>
+  <span aria-hidden="true" class="bg-red mb-2 block h-0.5 w-8"></span>
+
+  <span class="stat-value text-white">{stat.value}</span>
+
+  <span class="label-tech text-muted">{stat.label}</span>
+
+  {stat.note && <span class="body-text-sm max-w-[24ch] text-balance">{stat.note}</span>}
+</div>

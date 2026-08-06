@@ -1,0 +1,76 @@
+---
+import Container from '@/components/layout/Container.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import FaqAccordion from '@/components/islands/FaqAccordion';
+import { faq } from '@/data/faq';
+import { site } from '@/data/site';
+---
+
+<section
+  id="preguntas"
+  class="bg-surface relative overflow-hidden border-y border-(--color-border) py-20 lg:py-28"
+>
+  <div aria-hidden="true" class="tech-grid opacity-50"></div>
+
+  <Container class="relative">
+    <div class="grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-4">
+        <div class="lg:sticky lg:top-[calc(var(--header-h)+3rem)] flex flex-col gap-6">
+          <SectionHeading
+            eyebrow="Preguntas frecuentes"
+            index="07"
+            lines={['Antes de', 'inscribirte.']}
+            accentIndex={1}
+          />
+          <p class="body-text max-w-sm">
+            Si algo no queda claro, escríbenos antes de pagar. Preferimos resolverlo primero.
+          </p>
+          <a
+            href={`mailto:${site.contactEmail}`}
+            class="text-gold hover:text-white w-fit text-sm font-semibold break-all underline underline-offset-4 transition-colors"
+          >
+            {site.contactEmail}
+          </a>
+        </div>
+      </div>
+
+      <div class="lg:col-span-8" data-reveal="up">
+        <FaqAccordion client:visible items={[...faq]} />
+      </div>
+    </div>
+  </Container>
+</section>
+
+<style is:global>
+  /* El acordeón vive en una isla de React, así que sus estilos no pueden ir
+     con ámbito de componente Astro. */
+  .faq-item .faq-chevron {
+    transition: transform 260ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .faq-item[open] .faq-chevron {
+    transform: rotate(180deg);
+    color: var(--color-red);
+  }
+
+  .faq-item[open] .faq-answer {
+    animation: faq-reveal 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes faq-reveal {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-item[open] .faq-answer {
+      animation: none;
+    }
+  }
+</style>

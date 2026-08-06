@@ -1,0 +1,67 @@
+---
+import Container from '@/components/layout/Container.astro';
+import PrimaryButton from '@/components/ui/PrimaryButton.astro';
+import GhostText from '@/components/ui/GhostText.astro';
+import { offer } from '@/data/site';
+---
+
+<section id="empezar" class="relative isolate overflow-hidden py-24 lg:py-36">
+  <div aria-hidden="true" class="final-beams"></div>
+  <div aria-hidden="true" class="tech-grid opacity-70"></div>
+  <div aria-hidden="true" class="noise-layer"></div>
+  <GhostText
+    text="ALCANZA TU PRIME"
+    size="sm"
+    class="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-60"
+  />
+
+  <Container class="relative">
+    <div class="flex max-w-3xl flex-col gap-8">
+      <p class="eyebrow tick-red" data-reveal="fade">Último paso</p>
+
+      <h2 class="h2 text-white">
+        <span class="block" data-reveal="up">Tu siguiente rango</span>
+        <span class="block" data-reveal="up">no se consigue</span>
+        <span class="text-accent-red block" data-reveal="up">jugando a ciegas.</span>
+      </h2>
+
+      <p class="lead max-w-xl" data-reveal="up">
+        Entra a The Apex Prime, aprende qué corregir y comienza a entrenar con un plan.
+      </p>
+
+      <div class="flex flex-col gap-5 pt-2 sm:flex-row sm:items-center sm:gap-8" data-reveal="up">
+        <div class="flex flex-col">
+          <span class="display text-white text-4xl leading-none">$500 MXN</span>
+          <span class="label-tech text-muted mt-1.5">Por mes</span>
+        </div>
+
+        <PrimaryButton
+          href={offer.checkoutUrl}
+          external
+          size="lg"
+          track="final_cta_click"
+          class="w-full sm:w-auto"
+        >
+          Alcanzar mi Prime
+        </PrimaryButton>
+      </div>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .final-beams {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(
+        ellipse 55% 62% at 88% 50%,
+        rgb(217 45 39 / 0.26) 0%,
+        rgb(143 23 20 / 0.1) 44%,
+        transparent 74%
+      ),
+      radial-gradient(ellipse 40% 40% at 6% 6%, rgb(214 166 44 / 0.08) 0%, transparent 68%),
+      linear-gradient(to bottom, #050505, #0b0707 60%, #050505);
+  }
+</style>

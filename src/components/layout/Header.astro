@@ -1,0 +1,110 @@
+---
+import { Image } from 'astro:assets';
+
+import Container from './Container.astro';
+import PrimaryButton from '@/components/ui/PrimaryButton.astro';
+import MobileMenu from '@/components/islands/MobileMenu';
+import { navigation, primaryCtaLabel } from '@/data/navigation';
+import { site, offer } from '@/data/site';
+
+import logo from '@assets/thepro_mini_logo.png';
+---
+
+<header
+  id="site-header"
+  class="fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,backdrop-filter] duration-300 data-[scrolled]:bg-background/88 data-[scrolled]:shadow-[0_1px_0_0_var(--color-border)] data-[scrolled]:backdrop-blur-md"
+>
+  <Container
+    as="nav"
+    aria-label="Navegación principal"
+    class="flex h-(--header-h) items-center justify-between gap-3"
+  >
+    <a
+      href="#top"
+      class="group flex shrink-0 items-center gap-2.5"
+      aria-label={`${site.name} — inicio`}
+    >
+      <Image
+        src={logo}
+        alt=""
+        width={34}
+        height={34}
+        loading="eager"
+        class="h-8.5 w-8.5"
+        aria-hidden="true"
+      />
+      {/* Por debajo de 360px solo queda el isotipo: así el CTA y el menú nunca
+          se salen del ancho disponible. */}
+      <span
+        class="display text-white text-[0.9375rem] leading-none tracking-[0.02em] max-[359px]:hidden sm:text-base"
+      >
+        The Apex <span class="text-accent-gold">Prime</span>
+      </span>
+    </a>
+
+    <ul class="hidden items-center gap-7 lg:flex">
+      {
+        navigation.map((item) => (
+          <li>
+            <a class="nav-link" href={item.href}>
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="flex items-center gap-1.5 sm:gap-2">
+      {/* Siempre visible, también en móvil: el camino a la compra no depende de
+          que la isla del menú llegue a hidratarse. */}
+      <PrimaryButton
+        href={offer.checkoutUrl}
+        external
+        track="nav_cta_click"
+        icon="none"
+        class="min-h-11! px-3 py-2 text-[0.6875rem] sm:px-4 sm:text-xs"
+      >
+        {primaryCtaLabel}
+      </PrimaryButton>
+
+      {/* `client:idle`, no `client:load`: React son ~56 kB gzip y con
+          `client:load` compiten con el LCP del hero justo en móvil, que es de
+          donde llega casi todo el tráfico. El CTA de compra está aquí al lado y
+          es HTML estático, así que la conversión nunca espera a esta isla. */}
+      <MobileMenu
+        client:idle
+        items={[...navigation]}
+        checkoutUrl={offer.checkoutUrl}
+        ctaLabel={primaryCtaLabel}
+        priceLabel={offer.priceInline}
+      />
+    </div>
+  </Container>
+</header>
+
+<script>
+  // Estado "scrolled" del header: fondo semitransparente al bajar.
+  const header = document.getElementById('site-header');
+
+  if (header) {
+    let ticking = false;
+
+    const update = (): void => {
+      ticking = false;
+      if (window.scrollY > 24) {
+        header.setAttribute('data-scrolled', '');
+      } else {
+        header.removeAttribute('data-scrolled');
+      }
+    };
+
+    const onScroll = (): void => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+</script>

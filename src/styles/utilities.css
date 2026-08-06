@@ -1,0 +1,402 @@
+/* ==========================================================================
+   Lenguaje visual — CSS nativo
+   Recortes angulares, marcos incompletos, cuadrículas técnicas, ruido y
+   tratamientos de imagen. Todo lo que Tailwind no resuelve con elegancia.
+   ========================================================================== */
+
+@layer components {
+  /* --- Recortes angulares ------------------------------------------------- */
+
+  /* Esquina superior derecha + inferior izquierda: la firma de la marca. */
+  .cut-corner {
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--cut)) 0,
+      100% var(--cut),
+      100% 100%,
+      var(--cut) 100%,
+      0 calc(100% - var(--cut))
+    );
+  }
+
+  .cut-corner-tr {
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--cut)) 0,
+      100% var(--cut),
+      100% 100%,
+      0 100%
+    );
+  }
+
+  .cut-corner-bl {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut)));
+  }
+
+  .cut-lg {
+    --cut: var(--cut-lg);
+  }
+
+  /* --- Paneles ------------------------------------------------------------ */
+
+  /* Panel rectangular con borde angular.
+     Dos capas: la exterior es el borde, la interior la superficie. Es la forma
+     fiable de tener un borde de 1px que siga un clip-path (border-image no
+     respeta el recorte). */
+  .panel {
+    padding: 1px;
+    background-color: var(--color-border);
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--cut)) 0,
+      100% var(--cut),
+      100% 100%,
+      var(--cut) 100%,
+      0 calc(100% - var(--cut))
+    );
+    transition: background-color 260ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .panel-inner {
+    height: 100%;
+    background-color: var(--color-surface);
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--cut)) 0,
+      100% var(--cut),
+      100% 100%,
+      var(--cut) 100%,
+      0 calc(100% - var(--cut))
+    );
+  }
+
+  .panel-inner--transparent {
+    background-color: transparent;
+  }
+
+  .panel-inner--raised {
+    background-color: var(--color-surface-light);
+  }
+
+  /* Hover: el borde se tiñe de rojo. Sin escalados ni sombras difusas. */
+  .panel--interactive:hover {
+    background-color: rgb(217 45 39 / 0.55);
+  }
+
+  .panel--gold:hover {
+    background-color: rgb(214 166 44 / 0.6);
+  }
+
+  /* --- Marcos incompletos (esquinas tipo HUD) ----------------------------- */
+
+  .frame-brackets {
+    position: relative;
+  }
+
+  .frame-brackets::before,
+  .frame-brackets::after {
+    content: '';
+    position: absolute;
+    width: 1.25rem;
+    height: 1.25rem;
+    pointer-events: none;
+    border-color: var(--color-red);
+  }
+
+  .frame-brackets::before {
+    top: 0;
+    left: 0;
+    border-top: 2px solid;
+    border-left: 2px solid;
+  }
+
+  .frame-brackets::after {
+    right: 0;
+    bottom: 0;
+    border-right: 2px solid;
+    border-bottom: 2px solid;
+  }
+
+  .frame-brackets--gold::before,
+  .frame-brackets--gold::after {
+    border-color: var(--color-gold);
+  }
+
+  /* --- Reglas y separadores ----------------------------------------------- */
+
+  /* Hairline con un segmento rojo al inicio. */
+  .rule-tech {
+    position: relative;
+    height: 1px;
+    background: var(--color-border);
+  }
+
+  .rule-tech::after {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    width: 3.5rem;
+    background: var(--color-red);
+  }
+
+  /* Tick rojo que precede a las etiquetas. */
+  .tick-red::before {
+    content: '';
+    display: inline-block;
+    width: 0.75rem;
+    height: 2px;
+    margin-right: 0.625rem;
+    vertical-align: 0.28em;
+    background: var(--color-red);
+  }
+
+  .tick-gold::before {
+    background: var(--color-gold);
+  }
+
+  /* --- Texturas de fondo -------------------------------------------------- */
+
+  /* Cuadrícula técnica con desvanecido radial. Decorativa: aria-hidden. */
+  .tech-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgb(241 239 232 / 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(241 239 232 / 0.045) 1px, transparent 1px);
+    background-size: 4.5rem 4.5rem;
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 35%, #000 25%, transparent 78%);
+  }
+
+  .tech-grid--dense {
+    background-size: 2.25rem 2.25rem;
+  }
+
+  /* Ruido fractal SVG. */
+  .noise-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.055;
+    background-image: var(--noise-texture);
+    background-size: 140px 140px;
+    mix-blend-mode: overlay;
+  }
+
+  /* Scanlines finas — generadas en CSS, no se descarga ninguna textura. */
+  .scanlines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgb(0 0 0 / 0.28) 0 1px,
+      transparent 1px 3px
+    );
+    opacity: 0.5;
+  }
+
+  /* Halo rojo de iluminación. */
+  .glow-red {
+    position: absolute;
+    pointer-events: none;
+    background: radial-gradient(
+      circle at center,
+      rgb(217 45 39 / 0.34) 0%,
+      rgb(143 23 20 / 0.14) 38%,
+      transparent 70%
+    );
+    filter: blur(8px);
+  }
+
+  .glow-gold {
+    position: absolute;
+    pointer-events: none;
+    background: radial-gradient(
+      circle at center,
+      rgb(214 166 44 / 0.2) 0%,
+      transparent 68%
+    );
+    filter: blur(10px);
+  }
+
+  /* --- Tratamiento de imágenes -------------------------------------------- */
+
+  /* Monocromo con un punto de contacto rojo — context.md §6. */
+  .duotone {
+    filter: grayscale(1) contrast(1.12) brightness(0.92);
+  }
+
+  .duotone-red {
+    filter: grayscale(1) contrast(1.15) sepia(0.35) hue-rotate(-38deg) saturate(2.4)
+      brightness(0.82);
+  }
+
+  /* Desvanecido inferior para integrar recortes sobre el fondo. */
+  .fade-bottom {
+    mask-image: linear-gradient(to bottom, #000 68%, transparent 100%);
+  }
+
+  /* --- Botón principal ----------------------------------------------------- */
+
+  .primary-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    min-height: 52px;
+    padding: 0.9rem 1.5rem;
+    background: var(--color-red);
+    color: var(--color-white);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 800;
+    line-height: 1.15;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    isolation: isolate;
+    transition:
+      background-color 220ms cubic-bezier(0.4, 0, 0.2, 1),
+      transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--cut)) 0,
+      100% var(--cut),
+      100% 100%,
+      var(--cut) 100%,
+      0 calc(100% - var(--cut))
+    );
+  }
+
+  /* Barrido dorado que entra desde la izquierda al pasar el cursor. */
+  .primary-button::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    z-index: -1;
+    width: 3px;
+    background: var(--color-gold);
+    transition: width 260ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .primary-button:hover {
+    background: var(--color-red-bright);
+    transform: translateY(-2px);
+  }
+
+  .primary-button:hover::before {
+    width: 6px;
+  }
+
+  .primary-button:active {
+    transform: translateY(0);
+  }
+
+  .primary-button .btn-arrow {
+    transition: transform 260ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .primary-button:hover .btn-arrow {
+    transform: translateX(4px);
+  }
+
+  /* Variante secundaria: contorno, sin relleno. */
+  .ghost-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 48px;
+    padding: 0.75rem 1.25rem;
+    background: transparent;
+    color: var(--color-white);
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1px var(--color-border);
+    transition:
+      box-shadow 200ms ease,
+      color 200ms ease,
+      background-color 200ms ease;
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--cut)) 0,
+      100% var(--cut),
+      100% 100%,
+      var(--cut) 100%,
+      0 calc(100% - var(--cut))
+    );
+  }
+
+  .ghost-button:hover {
+    box-shadow: inset 0 0 0 1px rgb(214 166 44 / 0.55);
+    background-color: rgb(214 166 44 / 0.06);
+    color: var(--color-gold);
+  }
+
+  /* --- Enlaces de navegación ----------------------------------------------- */
+
+  .nav-link {
+    position: relative;
+    display: inline-block;
+    padding-block: 0.35rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgb(241 239 232 / 0.68);
+    text-decoration: none;
+    transition: color 180ms ease;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--color-red);
+    transition: width 240ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .nav-link:hover {
+    color: var(--color-white);
+  }
+
+  .nav-link:hover::after {
+    width: 100%;
+  }
+
+  /* --- Utilidades varias --------------------------------------------------- */
+
+  /* Oculta visualmente pero mantiene el texto para lectores de pantalla. */
+  .sr-only-focusable:not(:focus):not(:focus-within) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}

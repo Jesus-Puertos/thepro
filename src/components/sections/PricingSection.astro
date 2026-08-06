@@ -1,0 +1,132 @@
+---
+import Container from '@/components/layout/Container.astro';
+import PrimaryButton from '@/components/ui/PrimaryButton.astro';
+import PlatformStrip from '@/components/ui/PlatformStrip.astro';
+import GhostText from '@/components/ui/GhostText.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { offer, alternativePayments, accessNote } from '@/data/site';
+---
+
+<section id="precio" class="relative overflow-hidden py-20 lg:py-28">
+  <div aria-hidden="true" class="tech-grid opacity-60"></div>
+  <div aria-hidden="true" class="glow-red top-0 left-1/2 h-[26rem] w-[46rem] -translate-x-1/2">
+  </div>
+  <GhostText
+    text="PRIME"
+    variant="red"
+    class="bottom-[-5%] left-1/2 -translate-x-1/2"
+    parallax={0.05}
+  />
+
+  <Container class="relative">
+    <div class="mx-auto max-w-4xl">
+      <div class="panel" style="--cut:28px" data-reveal="up">
+        <div class="panel-inner relative overflow-hidden p-6 sm:p-10 lg:p-14">
+          <div aria-hidden="true" class="tech-grid tech-grid--dense opacity-40"></div>
+
+          <div class="relative flex flex-col gap-9">
+            <header class="flex flex-col gap-4">
+              <p class="eyebrow tick-gold">La membresía</p>
+              <h2 class="h2 text-white">
+                The Apex <span class="text-outline-gold">Prime</span>
+              </h2>
+              <p class="label-tech text-muted">
+                Coaching + Plataforma + Intensivos + Comunidad
+              </p>
+            </header>
+
+            <div class="rule-tech" data-reveal="rule"></div>
+
+            <div class="flex flex-wrap items-end gap-x-5 gap-y-2">
+              <p class="display text-white text-[clamp(3.5rem,12vw,6rem)] leading-[0.82]">
+                $500
+                <span class="text-[0.3em] align-top tracking-[0.08em]">MXN</span>
+              </p>
+              <p class="label-tech text-muted pb-3">Por mes</p>
+            </div>
+
+            <ul class="grid gap-x-8 gap-y-3.5 sm:grid-cols-2">
+              {
+                offer.includes.map((item) => (
+                  <li class="flex items-start gap-3">
+                    <span class="text-red mt-0.5 shrink-0">
+                      <Icon name="check" size={17} strokeWidth={2.5} />
+                    </span>
+                    <span class="text-white/85 text-[0.9375rem] leading-relaxed">{item}</span>
+                  </li>
+                ))
+              }
+            </ul>
+
+            <div class="flex flex-col gap-4">
+              <PrimaryButton
+                href={offer.checkoutUrl}
+                external
+                size="lg"
+                fullWidth
+                track="checkout_start"
+                trackPayload={{ method: 'plataforma', source: 'precio' }}
+              >
+                Inscribirme y obtener acceso
+              </PrimaryButton>
+
+              <p class="body-text-sm text-center">{accessNote}</p>
+            </div>
+
+            <PlatformStrip class="justify-center" />
+          </div>
+        </div>
+      </div>
+
+      {/* Métodos alternativos: jerarquía menor y plegados, para no partir en tres
+          el camino de compra (context.md §3) y no exponer los datos bancarios
+          más de lo necesario (context.md §19). */}
+      <details class="alt-payments mt-6" data-reveal="fade">
+        <summary
+          class="ghost-button w-full justify-between text-left"
+          data-track="payment_click"
+          data-track-payload='{"method":"ver_alternativas"}'
+        >
+          <span>Prefiero pagar con PayPal o transferencia</span>
+          <span class="alt-payments-chevron shrink-0">
+            <Icon name="chevron-down" size={16} strokeWidth={2.5} />
+          </span>
+        </summary>
+
+        <div class="panel mt-3" style="--cut:12px">
+          <div class="panel-inner flex flex-col gap-5 p-5 sm:p-6">
+            <ul class="flex flex-col gap-4">
+              {
+                alternativePayments.map((method) => (
+                  <li class="flex flex-col gap-1 border-l-2 border-(--color-border) pl-4">
+                    <span class="label-tech text-gold">{method.label}</span>
+                    <span class="text-white text-sm font-semibold break-all select-all">
+                      {method.detail}
+                    </span>
+                    <span class="body-text-sm">{method.hint}</span>
+                  </li>
+                ))
+              }
+            </ul>
+
+            <p class="body-text-sm">
+              Envía tu comprobante y activamos tu acceso. Puede tardar hasta 24 horas, por eso
+              recomendamos el pago directo desde la plataforma.
+            </p>
+          </div>
+        </div>
+      </details>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .alt-payments-chevron {
+    display: inline-flex;
+    transition: transform 260ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .alt-payments[open] .alt-payments-chevron {
+    transform: rotate(180deg);
+  }
+</style>

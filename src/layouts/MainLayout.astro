@@ -1,0 +1,162 @@
+---
+import { getImage } from 'astro:assets';
+
+import Header from '@/components/layout/Header.astro';
+import Footer from '@/components/layout/Footer.astro';
+import { site, offer } from '@/data/site';
+import { structuredFaq } from '@/data/faq';
+
+import '@/styles/global.css';
+import ogSource from '@assets/thepro.webp';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = site.seo.title, description = site.seo.description } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
+
+// Imagen social 1200×630 derivada de la foto del coach.
+const ogImage = await getImage({
+  src: ogSource,
+  width: 1200,
+  height: 630,
+  fit: 'cover',
+  position: 'top',
+  format: 'jpg',
+});
+const ogImageUrl = new URL(ogImage.src, Astro.site ?? site.url).href;
+
+/**
+ * Datos estructurados.
+ * Solo se emite información confirmada: precio, oferta y las preguntas
+ * frecuentes con respuesta cerrada. Sin `aggregateRating` ni `Review`, porque
+ * todavía no hay reseñas verificables (context.md §16 y §18).
+ */
+const productSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: site.name,
+  description: site.seo.description,
+  brand: { '@type': 'Brand', name: site.name },
+  category: 'Coaching de videojuegos',
+  image: [ogImageUrl],
+  offers: {
+    '@type': 'Offer',
+    url: offer.checkoutUrl,
+    price: String(offer.price),
+    priceCurrency: offer.currency,
+    availability: 'https://schema.org/InStock',
+    category: 'Suscripción mensual',
+  },
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: structuredFaq.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: { '@type': 'Answer', text: item.answer },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="es-MX">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="theme-color" content="#050505" />
+    <meta name="color-scheme" content="dark" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`The Pro, coach de ${site.name}`} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    {/* Compuerta de animación: sin esta clase todo el contenido es visible. */}
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        try {
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        } catch (error) {
+          return;
+        }
+        root.classList.add('motion-ready');
+        // Failsafe: si GSAP no llega a arrancar, se restaura la visibilidad.
+        window.setTimeout(function () {
+          if (!root.classList.contains('motion-armed')) {
+            root.classList.remove('motion-ready');
+          }
+        }, 2500);
+      })();
+    </script>
+
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(productSchema)} />
+    {
+      faqSchema.mainEntity.length > 0 && (
+        <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+      )
+    }
+  </head>
+
+  <body>
+    <a
+      href="#contenido"
+      class="sr-only-focusable bg-red text-white fixed top-3 left-3 z-100 px-4 py-3 text-sm font-bold uppercase"
+    >
+      Saltar al contenido
+    </a>
+
+    <Header />
+
+    <main id="contenido">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <script>
+      import { initAnalytics } from '@/lib/analytics';
+
+      initAnalytics();
+
+      // GSAP solo se descarga si realmente vamos a animar. Si la descarga falla
+      // se retira la compuerta a mano, sin esperar al failsafe del <head>.
+      if (document.documentElement.classList.contains('motion-ready')) {
+        void import('@/lib/motion')
+          .then(({ initMotion }) => initMotion())
+          .catch(() => document.documentElement.classList.remove('motion-ready'));
+      }
+    </script>
+  </body>
+</html>

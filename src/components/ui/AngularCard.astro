@@ -1,0 +1,69 @@
+---
+/**
+ * Panel rectangular con esquinas recortadas.
+ * Dos capas (borde + superficie) para que el borde de 1px siga el clip-path.
+ */
+interface Props {
+  tone?: 'surface' | 'raised' | 'transparent';
+  interactive?: boolean;
+  accent?: 'red' | 'gold';
+  brackets?: boolean;
+  padding?: 'sm' | 'md' | 'lg' | 'none';
+  cut?: number;
+  as?: 'div' | 'article' | 'li' | 'figure';
+  class?: string;
+  innerClass?: string;
+  /** Cualquier otro atributo (`data-reveal`, `id`…) se reenvía al elemento raíz. */
+  [key: string]: unknown;
+}
+
+const {
+  tone = 'surface',
+  interactive = false,
+  accent = 'red',
+  brackets = false,
+  padding = 'md',
+  cut,
+  as: Tag = 'div',
+  class: className,
+  innerClass,
+  ...rest
+} = Astro.props as Props;
+
+const paddings = {
+  none: '',
+  sm: 'p-4 sm:p-5',
+  md: 'p-5 sm:p-6',
+  lg: 'p-6 sm:p-8 lg:p-10',
+} as const;
+
+const tones = {
+  surface: '',
+  raised: 'panel-inner--raised',
+  transparent: 'panel-inner--transparent',
+} as const;
+---
+
+<Tag
+  class:list={[
+    'panel',
+    interactive && 'panel--interactive',
+    interactive && accent === 'gold' && 'panel--gold',
+    className,
+  ]}
+  style={cut ? `--cut:${cut}px` : undefined}
+  {...rest}
+>
+  <div
+    class:list={[
+      'panel-inner relative',
+      tones[tone],
+      paddings[padding],
+      brackets && 'frame-brackets',
+      brackets && accent === 'gold' && 'frame-brackets--gold',
+      innerClass,
+    ]}
+  >
+    <slot />
+  </div>
+</Tag>

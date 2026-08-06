@@ -1,0 +1,65 @@
+---
+/**
+ * CTA reutilizable. Renderiza <a> si recibe `href`, si no un <button> real
+ * (nunca un div clicable). El seguimiento se declara con `track`, que la capa
+ * de analítica recoge por delegación — sin JavaScript en el componente.
+ */
+import Icon from './Icon.astro';
+import type { AnalyticsEvent } from '@/lib/analytics';
+import type { IconName } from '@/types';
+
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'ghost';
+  size?: 'md' | 'lg';
+  fullWidth?: boolean;
+  icon?: IconName | 'none';
+  external?: boolean;
+  track?: AnalyticsEvent;
+  trackPayload?: Record<string, string | number | boolean>;
+  ariaLabel?: string;
+  id?: string;
+  class?: string;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  fullWidth = false,
+  icon = 'arrow-right',
+  external = false,
+  track,
+  trackPayload,
+  ariaLabel,
+  id,
+  class: className,
+} = Astro.props;
+
+const base = variant === 'primary' ? 'primary-button' : 'ghost-button';
+const sizing = size === 'lg' ? 'min-h-[60px] px-7 text-[0.9375rem]' : '';
+const width = fullWidth ? 'w-full' : '';
+
+const trackAttrs = track
+  ? {
+      'data-track': track,
+      ...(trackPayload ? { 'data-track-payload': JSON.stringify(trackPayload) } : {}),
+    }
+  : {};
+
+const externalAttrs = external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag
+  id={id}
+  href={href}
+  type={href ? undefined : 'button'}
+  aria-label={ariaLabel}
+  class:list={[base, sizing, width, className]}
+  {...trackAttrs}
+  {...externalAttrs}
+>
+  <slot />
+  {icon !== 'none' && <Icon name={icon} size={17} strokeWidth={2.25} class="btn-arrow shrink-0" />}
+</Tag>

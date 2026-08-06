@@ -1,0 +1,101 @@
+---
+import Container from '@/components/layout/Container.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import GhostText from '@/components/ui/GhostText.astro';
+import TestimonialCarousel from '@/components/islands/TestimonialCarousel';
+import { spotlightTestimonials, rosterMembers } from '@/data/testimonials';
+
+/* El roster se duplica en el marcado solo para que el desplazamiento sea
+   continuo; la copia va oculta a lectores de pantalla. */
+const roster = [...rosterMembers, ...spotlightTestimonials];
+---
+
+<section id="resultados" class="relative overflow-hidden py-20 lg:py-28">
+  <div aria-hidden="true" class="tech-grid opacity-50"></div>
+  <GhostText
+    text="RESULTADOS"
+    size="sm"
+    variant="outline"
+    class="top-6 left-[2%] hidden lg:block"
+    parallax={0.08}
+  />
+
+  <Container class="relative">
+    <SectionHeading
+      eyebrow="Resultados"
+      index="05"
+      lines={['Jugadores reales.', 'Progreso real.']}
+      outlineIndex={1}
+      description="Publicamos únicamente testimonios confirmados por sus autores. No hay rangos inventados ni promesas de resultados garantizados."
+      class="max-w-3xl"
+    />
+
+    <div class="mt-12 lg:mt-16" data-reveal="up">
+      <TestimonialCarousel client:visible items={[...spotlightTestimonials]} />
+    </div>
+
+    {/* Roster: nombre y plataforma son los únicos datos confirmados del resto
+        de miembros, así que no se les fabrica una tarjeta de testimonio. */}
+    <div class="mt-16 lg:mt-20" data-reveal="fade">
+      <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <p class="eyebrow tick-gold">Miembros de la comunidad</p>
+        <div class="rule-tech hidden flex-1 sm:block" data-reveal="rule"></div>
+      </div>
+
+      <div class="marquee relative overflow-hidden">
+        <ul class="marquee-track gap-3">
+          {
+            [0, 1].map((copy) => (
+              <Fragment>
+                {roster.map((member) => (
+                  <li
+                    class="panel shrink-0"
+                    style="--cut:8px"
+                    aria-hidden={copy === 1 ? 'true' : undefined}
+                  >
+                    <div class="panel-inner flex items-center gap-3 px-4 py-3">
+                      <span aria-hidden="true" class="bg-red h-1.5 w-1.5" />
+                      <span class="text-white text-sm font-semibold whitespace-nowrap">
+                        {member.handle}
+                      </span>
+                      <span class="label-tech text-muted whitespace-nowrap">
+                        {member.platform}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </Fragment>
+            ))
+          }
+        </ul>
+
+        <div aria-hidden="true" class="marquee-edge marquee-edge--left"></div>
+        <div aria-hidden="true" class="marquee-edge marquee-edge--right"></div>
+      </div>
+
+      {/* TODO(pendiente): pedir cita textual y resultado a zB I ZeNeR I, WILJO,
+          KENAL_VZ, mattblwolf, MaikSensei y ORDAMA. Al añadir `quote` en
+          src/data/testimonials.ts pasan automáticamente al carrusel. */}
+    </div>
+  </Container>
+</section>
+
+<style>
+  .marquee-edge {
+    position: absolute;
+    inset-block: 0;
+    z-index: 1;
+    width: 4rem;
+    pointer-events: none;
+  }
+
+  .marquee-edge--left {
+    left: 0;
+    background: linear-gradient(to right, var(--color-background), transparent);
+  }
+
+  .marquee-edge--right {
+    right: 0;
+    background: linear-gradient(to left, var(--color-background), transparent);
+  }
+</style>

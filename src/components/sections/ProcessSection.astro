@@ -1,0 +1,56 @@
+---
+import Container from '@/components/layout/Container.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import AngularCard from '@/components/ui/AngularCard.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { processSteps } from '@/data/process';
+import { accessNote } from '@/data/site';
+---
+
+<section
+  id="como-funciona"
+  class="bg-surface relative overflow-hidden border-y border-(--color-border) py-20 lg:py-28"
+>
+  <div aria-hidden="true" class="tech-grid tech-grid--dense opacity-40"></div>
+  <div aria-hidden="true" class="noise-layer"></div>
+
+  <Container class="relative">
+    <SectionHeading
+      eyebrow="Cómo funciona"
+      index="04"
+      lines={['De la inscripción', 'a tu primera sesión.']}
+      align="center"
+      class="mx-auto max-w-2xl"
+    />
+
+    <ol class="mt-14 grid gap-6 md:grid-cols-3 lg:mt-16 lg:gap-8">
+      {
+        processSteps.map((step) => (
+          <AngularCard as="li" tone="raised" padding="lg" interactive brackets data-reveal="up">
+            <span
+              aria-hidden="true"
+              class="display text-white/8 absolute top-5 right-6 text-6xl leading-none"
+            >
+              {step.index}
+            </span>
+
+            <span class="text-gold mb-6 flex h-12 w-12 items-center justify-center bg-gold/8 shadow-[inset_0_0_0_1px_rgb(214_166_44_/_0.3)]">
+              <Icon name={step.icon} size={22} />
+            </span>
+
+            <h3 class="h3 text-white mb-3 pr-10">{step.title}</h3>
+            <p class="body-text">{step.description}</p>
+          </AngularCard>
+        ))
+      }
+    </ol>
+
+    <p
+      class="body-text-sm mx-auto mt-10 flex max-w-3xl items-start gap-3 text-center md:text-left"
+      data-reveal="fade"
+    >
+      <Icon name="clock" size={16} class="text-red mt-0.5 hidden shrink-0 md:block" />
+      <span>{accessNote}</span>
+    </p>
+  </Container>
+</section>

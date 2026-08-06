@@ -1,0 +1,60 @@
+---
+import Container from '@/components/layout/Container.astro';
+import StatItem from '@/components/ui/StatItem.astro';
+import { stats } from '@/data/stats';
+---
+
+<section
+  aria-label="Datos del programa"
+  class="bg-surface relative border-y border-(--color-border)"
+>
+  <div aria-hidden="true" class="tech-grid tech-grid--dense opacity-50"></div>
+  <div aria-hidden="true" class="noise-layer"></div>
+
+  <Container class="relative">
+    <ul class="stats-row grid grid-cols-2 lg:grid-cols-4">
+      {
+        stats.map((stat) => (
+          <li class="stats-cell">
+            <StatItem stat={stat} />
+          </li>
+        ))
+      }
+    </ul>
+  </Container>
+</section>
+
+<style>
+  /* Separadores hairline entre celdas. Se dibujan con `border` dentro de la
+     celda para que nunca sobresalgan del contenedor. */
+  .stats-cell {
+    position: relative;
+    padding-inline-end: 1rem;
+  }
+
+  .stats-cell:nth-child(even) {
+    padding-inline: 1rem 0;
+    border-inline-start: 1px solid var(--color-border);
+  }
+
+  /* En dos columnas, la segunda fila se separa con una línea superior. */
+  .stats-cell:nth-child(n + 3) {
+    border-block-start: 1px solid var(--color-border);
+  }
+
+  @media (min-width: 1024px) {
+    .stats-cell {
+      padding-inline: 1.5rem;
+      border-inline-start: 1px solid var(--color-border);
+    }
+
+    .stats-cell:first-child {
+      padding-inline-start: 0;
+      border-inline-start: 0;
+    }
+
+    .stats-cell:nth-child(n + 3) {
+      border-block-start: 0;
+    }
+  }
+</style>

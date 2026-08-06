@@ -1,0 +1,26 @@
+---
+/** Etiqueta técnica pequeña con recorte angular. */
+interface Props {
+  tone?: 'red' | 'gold' | 'neutral';
+  class?: string;
+}
+
+const { tone = 'neutral', class: className } = Astro.props;
+
+const tones = {
+  red: 'text-red shadow-[inset_0_0_0_1px_rgb(217_45_39_/_0.45)] bg-red/8',
+  gold: 'text-gold shadow-[inset_0_0_0_1px_rgb(214_166_44_/_0.42)] bg-gold/8',
+  neutral: 'text-muted shadow-[inset_0_0_0_1px_var(--color-border)] bg-white/2',
+} as const;
+---
+
+<span
+  class:list={[
+    'cut-corner inline-flex items-center gap-2 px-3 py-1.5 text-[0.625rem] font-bold tracking-[0.2em] uppercase',
+    tones[tone],
+    className,
+  ]}
+  style="--cut:6px"
+>
+  <slot />
+</span>

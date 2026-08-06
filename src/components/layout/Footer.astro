@@ -1,0 +1,116 @@
+---
+import { Image } from 'astro:assets';
+
+import Container from './Container.astro';
+import { navigation } from '@/data/navigation';
+import { site, socials, legalLinks, disclaimer } from '@/data/site';
+
+import logo from '@assets/thepro_mini_logo.png';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-(--color-border) bg-background relative overflow-hidden">
+  <div aria-hidden="true" class="tech-grid opacity-70"></div>
+  <div aria-hidden="true" class="noise-layer"></div>
+  <div
+    aria-hidden="true"
+    class="glow-red -bottom-40 left-1/2 h-72 w-[38rem] -translate-x-1/2 opacity-30"
+  >
+  </div>
+
+  <Container class="relative py-14 lg:py-20">
+    <div class="grid gap-12 lg:grid-cols-[1.4fr_1fr_1fr]">
+      <div class="flex flex-col gap-5">
+        <div class="flex items-center gap-3">
+          <Image
+            src={logo}
+            alt=""
+            width={40}
+            height={40}
+            loading="lazy"
+            class="h-10 w-10"
+            aria-hidden="true"
+          />
+          <span class="display text-white text-xl">
+            The Apex <span class="text-accent-gold">Prime</span>
+          </span>
+        </div>
+
+        <p class="body-text max-w-sm">
+          Coaching, sesiones intensivas, cursos y comunidad para jugadores de Apex Legends
+          que quieren entrenar con un método.
+        </p>
+
+        <div class="rule-tech mt-2 w-40"></div>
+      </div>
+
+      <nav aria-label="Secciones" class="flex flex-col gap-4">
+        <p class="label-tech text-muted">Navegación</p>
+        <ul class="flex flex-col gap-2.5">
+          {
+            navigation.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="text-white/70 hover:text-red text-sm transition-colors"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="flex flex-col gap-8">
+        <div class="flex flex-col gap-4">
+          <p class="label-tech text-muted">Comunidad</p>
+          <ul class="flex flex-col gap-2.5">
+            {
+              socials.map((item) => (
+                <li>
+                  <a
+                    href={item.href}
+                    class="text-white/70 hover:text-gold text-sm transition-colors"
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="flex flex-col gap-4">
+          <p class="label-tech text-muted">Legal</p>
+          <ul class="flex flex-col gap-2.5">
+            {
+              legalLinks.map((item) => (
+                <li>
+                  <a
+                    href={item.href}
+                    class="text-white/70 hover:text-gold text-sm transition-colors"
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="mt-14 flex flex-col gap-5 border-t border-(--color-border) pt-8 lg:flex-row lg:items-start lg:justify-between"
+    >
+      <p class="body-text-sm max-w-2xl">
+        {disclaimer}
+      </p>
+      <p class="label-tech text-muted shrink-0">
+        © {year} {site.name}
+      </p>
+    </div>
+  </Container>
+</footer>

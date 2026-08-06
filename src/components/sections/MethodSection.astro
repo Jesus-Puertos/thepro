@@ -1,0 +1,100 @@
+---
+import Container from '@/components/layout/Container.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import Icon from '@/components/ui/Icon.astro';
+import GhostText from '@/components/ui/GhostText.astro';
+import { methodSteps } from '@/data/method';
+---
+
+<section
+  id="metodo"
+  class="bg-surface relative overflow-hidden border-y border-(--color-border) py-20 lg:py-28"
+>
+  <div aria-hidden="true" class="tech-grid opacity-70"></div>
+  <div aria-hidden="true" class="noise-layer"></div>
+  <GhostText
+    text="MÉTODO"
+    variant="outline"
+    class="bottom-[-3%] left-[2%]"
+    parallax={0.06}
+  />
+
+  <Container class="relative">
+    <SectionHeading
+      eyebrow="La ruta"
+      index="02"
+      lines={['Entrena con un método.', 'No a ciegas.']}
+      outlineIndex={1}
+      description="Cinco pasos que se repiten hasta que dejan de hacer falta. No es un curso que se termina: es una forma de entrenar."
+      class="max-w-3xl"
+    />
+
+    <ol class="method-rail mt-14 grid gap-px lg:mt-20 lg:grid-cols-5">
+      {
+        methodSteps.map((step) => (
+          <li class="method-step bg-background relative p-6 lg:p-7" data-reveal="up">
+            <span
+              aria-hidden="true"
+              class="display text-white/6 absolute top-4 right-4 text-5xl leading-none"
+            >
+              {step.index}
+            </span>
+
+            <span class="text-red mb-6 flex h-11 w-11 items-center justify-center bg-red/8 shadow-[inset_0_0_0_1px_rgb(217_45_39_/_0.3)]">
+              <Icon name={step.icon} size={20} />
+            </span>
+
+            <h3 class="h4 text-white mb-2 pr-8">{step.title}</h3>
+            <p class="body-text">{step.description}</p>
+
+            <span aria-hidden="true" class="method-arrow">
+              <Icon name="arrow-right" size={14} strokeWidth={2.5} />
+            </span>
+          </li>
+        ))
+      }
+    </ol>
+  </Container>
+</section>
+
+<style>
+  /* La cuadrícula usa `gap: 1px` sobre un fondo de borde: hairlines perfectos. */
+  .method-rail {
+    background: var(--color-border);
+    border: 1px solid var(--color-border);
+  }
+
+  .method-step {
+    /* Esquina recortada solo en el primer y último paso: enmarca la secuencia. */
+    display: flex;
+    flex-direction: column;
+  }
+
+  .method-arrow {
+    position: absolute;
+    right: -1px;
+    bottom: 1.5rem;
+    z-index: 1;
+    display: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-red);
+    background: var(--color-background);
+  }
+
+  @media (min-width: 1024px) {
+    .method-arrow {
+      display: flex;
+      top: 50%;
+      right: -0.75rem;
+      bottom: auto;
+      transform: translateY(-50%);
+    }
+
+    .method-step:last-child .method-arrow {
+      display: none;
+    }
+  }
+</style>

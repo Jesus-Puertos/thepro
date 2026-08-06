@@ -1,0 +1,130 @@
+@import 'tailwindcss';
+@import './typography.css';
+@import './utilities.css';
+@import './animations.css';
+
+/* ==========================================================================
+   Sistema visual de The Apex Prime
+   Paleta y jerarquía definidas en context.md §6. Sin morado, sin degradados
+   decorativos, sin sombras suaves tipo SaaS.
+   ========================================================================== */
+
+@theme {
+  --color-background: #050505;
+  --color-surface: #101010;
+  --color-surface-light: #191919;
+  --color-red: #d92d27;
+  --color-red-bright: #f0453f;
+  --color-red-dark: #8f1714;
+  --color-white: #f1efe8;
+  --color-muted: #8c8981;
+  --color-gold: #d6a62c;
+  --color-gold-dark: #7d6015;
+  --color-line: rgb(241 239 232 / 0.16);
+  --color-line-soft: rgb(241 239 232 / 0.07);
+
+  --font-display: 'Anton', 'Arial Narrow', 'Helvetica Neue', sans-serif;
+  --font-body:
+    'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: var(--font-body);
+
+  /* 1320px de contenido + aire lateral: context.md §13 pide 1180–1440. */
+  --container-content: 82.5rem;
+}
+
+@layer base {
+  :root {
+    /* Alias con los nombres exactos del brief, para CSS nativo. */
+    --color-border: rgb(241 239 232 / 0.16);
+
+    /* Esquina recortada compartida por botones, paneles y tarjetas. */
+    --cut: 14px;
+    --cut-lg: 24px;
+
+    --header-h: 4.25rem;
+
+    /* Ruido fractal SVG: textura sutil, sin descargar imágenes pesadas. */
+    --noise-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --header-h: 5rem;
+    }
+  }
+
+  * {
+    border-color: var(--color-border);
+    min-width: 0;
+  }
+
+  html {
+    color-scheme: dark;
+    background-color: var(--color-background);
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-h) + 1.5rem);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    /* `clip` en lugar de `hidden`: evita el scroll horizontal sin romper sticky. */
+    overflow-x: clip;
+  }
+
+  body {
+    overflow-x: clip;
+    background-color: var(--color-background);
+    color: var(--color-white);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.6;
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--color-red);
+    color: var(--color-white);
+  }
+
+  /* Foco visible y consistente en toda la página (brief: outline dorado). */
+  :where(a, button, summary, input, [tabindex]):focus-visible {
+    outline: 3px solid rgb(214 166 44 / 0.65);
+    outline-offset: 4px;
+  }
+
+  :where(a, button, summary):focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  summary {
+    cursor: pointer;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  img,
+  svg,
+  video,
+  canvas {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* Se respeta prefers-reduced-motion en toda la página. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

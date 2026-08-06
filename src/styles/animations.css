@@ -1,0 +1,154 @@
+/* ==========================================================================
+   Animaciones
+
+   Estrategia: el contenido es visible por defecto. Solo cuando el script inline
+   confirma que hay JS y que el usuario NO pidió menos movimiento se añade
+   `.motion-ready` al <html>, que activa los estados iniciales ocultos.
+
+   Dos seguros contra quedarse con contenido invisible:
+   1. Cada elemento se marca con `data-revealed` en cuanto empieza su animación.
+      A partir de ahí NINGUNA regla de este archivo puede volver a ocultarlo,
+      así que `clearProps` de GSAP es seguro.
+   2. Si GSAP nunca arranca, un failsafe retira `.motion-ready` y todo reaparece.
+   ========================================================================== */
+
+@layer components {
+  /* --- Máscara por línea (títulos) ---------------------------------------- */
+
+  .line-mask {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.06em;
+    margin-bottom: -0.06em;
+  }
+
+  .line-mask > span {
+    display: block;
+    will-change: transform;
+  }
+
+  /* --- Estados iniciales -----------------------------------------------------
+     Solo se aplican con `.motion-ready` y mientras el elemento no tenga
+     `data-revealed`. Los valores deben coincidir con los `from` de
+     `src/lib/motion.ts`. */
+
+  html.motion-ready .line-mask > [data-hero-line]:not([data-revealed]) {
+    transform: translate3d(0, 110%, 0);
+  }
+
+  html.motion-ready [data-reveal]:not([data-revealed]) {
+    opacity: 0;
+  }
+
+  html.motion-ready [data-reveal='up']:not([data-revealed]) {
+    transform: translate3d(0, 44px, 0);
+  }
+
+  html.motion-ready [data-reveal='fade']:not([data-revealed]) {
+    transform: none;
+  }
+
+  html.motion-ready [data-reveal='left']:not([data-revealed]) {
+    transform: translate3d(-32px, 0, 0);
+  }
+
+  html.motion-ready [data-reveal='scale']:not([data-revealed]) {
+    transform: scale(0.97);
+  }
+
+  /* Línea decorativa que se dibuja al entrar en pantalla. */
+  html.motion-ready [data-reveal='rule']:not([data-revealed]) {
+    opacity: 1;
+    transform-origin: left center;
+    transform: scaleX(0);
+  }
+
+  /* --- Keyframes ----------------------------------------------------------- */
+
+  @keyframes tick-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.25;
+    }
+  }
+
+  @keyframes scan-sweep {
+    0% {
+      transform: translateY(-10%);
+      opacity: 0;
+    }
+    12% {
+      opacity: 0.55;
+    }
+    88% {
+      opacity: 0.55;
+    }
+    100% {
+      /* El elemento mide un 8% del hero, así que 1200% ≈ recorrerlo entero. */
+      transform: translateY(1200%);
+      opacity: 0;
+    }
+  }
+
+  @keyframes drift-slow {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, -10px, 0);
+    }
+  }
+
+  @keyframes marquee-x {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  /* --- Clases de animación ------------------------------------------------- */
+
+  .anim-tick {
+    animation: tick-pulse 2.4s ease-in-out infinite;
+  }
+
+  /* Línea de escaneo del hero. */
+  .anim-scan {
+    animation: scan-sweep 7s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  .anim-drift {
+    animation: drift-slow 9s ease-in-out infinite;
+  }
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee-x 42s linear infinite;
+  }
+
+  .marquee:hover .marquee-track,
+  .marquee:focus-within .marquee-track {
+    animation-play-state: paused;
+  }
+
+  /* Sin movimiento decorativo si el usuario lo pidió. */
+  @media (prefers-reduced-motion: reduce) {
+    .anim-tick,
+    .anim-scan,
+    .anim-drift,
+    .marquee-track {
+      animation: none;
+    }
+
+    .marquee-track {
+      transform: none;
+    }
+  }
+}

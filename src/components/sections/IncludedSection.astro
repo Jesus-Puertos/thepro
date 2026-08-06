@@ -1,0 +1,82 @@
+---
+import { getImage } from 'astro:assets';
+
+import Container from '@/components/layout/Container.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import PrimaryButton from '@/components/ui/PrimaryButton.astro';
+import PillarsScroll from '@/components/islands/PillarsScroll';
+import { carouselSlides } from '@/data/legends';
+import { benefits } from '@/data/benefits';
+import { offer } from '@/data/site';
+import type { CarouselSlide } from '@/types';
+
+/**
+ * Las imágenes se optimizan aquí, en el servidor, y se pasan resueltas a la
+ * isla: React nunca necesita `astro:assets` y el bundle del cliente no crece.
+ */
+const slides: CarouselSlide[] = await Promise.all(
+  carouselSlides.map(async ({ image, imageAlt, ...content }) => {
+    const optimized = await getImage({
+      src: image,
+      widths: [340, 520, 760],
+      format: 'webp',
+    });
+
+    return {
+      ...content,
+      image: {
+        src: optimized.src,
+        srcset: optimized.srcSet.attribute,
+        width: optimized.attributes.width ?? image.width,
+        height: optimized.attributes.height ?? image.height,
+        alt: imageAlt,
+      },
+    };
+  }),
+);
+---
+
+{/* Sin `overflow-hidden`: convertiría a la sección en contenedor de scroll y
+    rompería el `position: sticky` del escenario de pilares. El recorte lo hace
+    el propio elemento sticky. */}
+<section id="incluye" class="relative py-20 lg:py-28">
+  <Container class="relative">
+    <SectionHeading
+      eyebrow="Qué incluye"
+      index="03"
+      lines={['Cuatro pilares.', 'Una sola membresía.']}
+      accentIndex={0}
+      description="Coaching en vivo, plataforma de cursos, feedback real y una comunidad donde encontrar equipo. Todo entra en los $500 MXN al mes."
+      class="max-w-3xl"
+    />
+  </Container>
+
+  {/*
+    A ancho completo: en escritorio esto se convierte en un escenario fijo que
+    el scroll recorre. En móvil, tablet o con `prefers-reduced-motion` la isla
+    renderiza los cuatro pilares apilados — que es además lo que sale del
+    servidor, así que el contenido está completo aunque falle el JavaScript.
+  */}
+  <div class="relative mt-12 lg:mt-16">
+    <PillarsScroll
+      client:visible
+      slides={slides}
+      benefits={[...benefits]}
+    />
+  </div>
+
+  <Container class="relative mt-12">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <PrimaryButton
+        href={offer.checkoutUrl}
+        external
+        track="pricing_cta_click"
+        trackPayload={{ source: 'pilares' }}
+        class="w-full sm:w-auto"
+      >
+        Inscribirme por $500 MXN
+      </PrimaryButton>
+      <p class="body-text-sm">Los cuatro pilares están incluidos en la membresía.</p>
+    </div>
+  </Container>
+</section>

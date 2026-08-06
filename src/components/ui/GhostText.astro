@@ -1,0 +1,36 @@
+---
+/** Texto fantasma gigante de fondo. Decorativo: nunca lo leen los lectores. */
+interface Props {
+  text: string;
+  size?: 'lg' | 'sm';
+  /** `outline` y `red` dan más presencia sin tapar lo que va encima. */
+  variant?: 'solid' | 'outline' | 'red';
+  class?: string;
+  parallax?: number;
+}
+
+const {
+  text,
+  size = 'lg',
+  variant = 'solid',
+  class: className,
+  parallax,
+} = Astro.props;
+
+const variants = {
+  solid: '',
+  outline: 'ghost-text--outline',
+  red: 'ghost-text--red',
+} as const;
+---
+
+<span
+  aria-hidden="true"
+  class:list={[
+    'ghost-text absolute',
+    size === 'sm' && 'ghost-text--sm',
+    variants[variant],
+    className,
+  ]}
+  data-parallax={parallax}>{text}</span
+>

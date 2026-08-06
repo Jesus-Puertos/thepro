@@ -1,0 +1,174 @@
+/* ==========================================================================
+   Tipografía
+   Anton para display (títulos, cifras, texto fantasma). Inter para lectura.
+   Anton solo existe en un peso; nunca se le aplica font-weight ni synthesis.
+   ========================================================================== */
+
+@layer components {
+
+  .font-display,
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: -0.005em;
+    line-height: 0.88;
+  }
+
+  /* --- Escala de títulos ---------------------------------------------------- */
+
+  /* Anton tiene mayúsculas muy altas: por debajo de 0.95 de interlineado las
+     líneas se tocan. El tamaño máximo está calculado para que "ALCANZA TU
+     PRIME." quepa en una sola línea dentro de la columna de texto del hero;
+     subirlo la parte en dos y el CTA se va fuera de pantalla. */
+  .h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: clamp(2.375rem, 6.6vw, 5.25rem);
+    line-height: 0.95;
+    letter-spacing: 0;
+    text-wrap: balance;
+  }
+
+  .h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: clamp(2rem, 5.2vw, 3.75rem);
+    line-height: 0.94;
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+  }
+
+  .h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: clamp(1.375rem, 2.6vw, 1.875rem);
+    line-height: 0.98;
+    letter-spacing: 0.002em;
+  }
+
+  .h4 {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 1.0625rem;
+    line-height: 1.3;
+    letter-spacing: -0.005em;
+  }
+
+  /* --- Cifras grandes ------------------------------------------------------- */
+
+  .stat-value {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: clamp(2rem, 5.5vw, 3.25rem);
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+  }
+
+  /* --- Etiquetas técnicas --------------------------------------------------- */
+
+  .eyebrow {
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .label-tech {
+    font-family: var(--font-body);
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: rgb(140 137 129 / 0.85);
+  }
+
+  /* --- Texto de lectura ----------------------------------------------------- */
+
+  .lead {
+    font-size: clamp(1rem, 2.2vw, 1.125rem);
+    line-height: 1.65;
+    color: rgb(241 239 232 / 0.76);
+    text-wrap: pretty;
+  }
+
+  .body-text {
+    font-size: 0.9375rem;
+    line-height: 1.68;
+    color: rgb(241 239 232 / 0.66);
+    text-wrap: pretty;
+  }
+
+  .body-text-sm {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: rgb(241 239 232 / 0.58);
+    text-wrap: pretty;
+  }
+
+  /* --- Acentos de titular --------------------------------------------------- */
+
+  /* "ALCANZA TU PRIME." — contorno dorado con un relleno muy tenue.
+     El grosor va en `em` para que escale con el titular en lugar de quedarse
+     en un hilo de 1px a 108px de tamaño. */
+  .text-outline-gold {
+    color: rgb(214 166 44 / 0.12);
+    -webkit-text-stroke: 0.022em var(--color-gold);
+  }
+
+  @supports not (-webkit-text-stroke: 1px black) {
+    .text-outline-gold {
+      color: var(--color-gold);
+    }
+  }
+
+  .text-accent-red {
+    color: var(--color-red);
+  }
+
+  .text-accent-gold {
+    color: var(--color-gold);
+  }
+
+  /* Texto fantasma gigante de fondo. */
+  .ghost-text {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: clamp(7rem, 22vw, 24rem);
+    line-height: 0.8;
+    letter-spacing: -0.03em;
+    color: rgb(241 239 232 / 0.075);
+    white-space: nowrap;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .ghost-text--sm {
+    font-size: clamp(4.5rem, 15vw, 13rem);
+  }
+
+  /**
+   * Variante con contorno: da presencia sin ensuciar lo que hay encima.
+   * El relleno baja y el borde define la silueta, así que la palabra se lee
+   * como una forma grande en lugar de como una mancha gris.
+   * El grosor va en `em` para que escale con el tamaño del texto.
+   */
+  .ghost-text--outline {
+    color: rgb(241 239 232 / 0.045);
+    -webkit-text-stroke: 0.007em rgb(241 239 232 / 0.2);
+  }
+
+  /* Misma idea, en rojo: para bloques donde el acento manda. */
+  .ghost-text--red {
+    color: rgb(217 45 39 / 0.07);
+    -webkit-text-stroke: 0.007em rgb(217 45 39 / 0.3);
+  }
+}
