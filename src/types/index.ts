@@ -134,11 +134,19 @@ export interface CarouselSlideContent {
   readonly image: ImageMetadata;
   readonly imageAlt: string;
   /**
-   * Posición horizontal del centro visual de la figura, en % del ancho de la
-   * imagen. Varias ilustraciones tienen al personaje pegado a un borde: sin
-   * esto quedarían recortadas fuera del escenario en móvil.
+   * Valor de `object-position` para el recorte. Las tres piezas de key art son
+   * 16:9 con el sujeto a la derecha, así que centrarlas dejaría fuera lo que
+   * importa. Medido sobre el centroide de luminancia de cada imagen.
    */
-  readonly focusX: number;
+  readonly focus: string;
+  /**
+   * Cómo se dibuja la imagen en el escenario.
+   * `cutout`: figura recortada con alfa; va de pie, a toda altura, sin marco.
+   * `scene`: pieza 16:9; ocupa el escenario a sangre, fundida por los bordes.
+   * Meter las dos en la misma caja hace que la figura recortada quede flotando
+   * en un rectángulo vacío.
+   */
+  readonly kind: 'cutout' | 'scene';
 }
 
 /**

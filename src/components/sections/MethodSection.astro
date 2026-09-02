@@ -3,6 +3,8 @@ import Container from '@/components/layout/Container.astro';
 import SectionHeading from '@/components/ui/SectionHeading.astro';
 import Icon from '@/components/ui/Icon.astro';
 import GhostText from '@/components/ui/GhostText.astro';
+import SectionBackdrop from '@/components/ui/SectionBackdrop.astro';
+import backdrop from '@assets/left_legend.png';
 import { methodSteps } from '@/data/method';
 ---
 
@@ -12,6 +14,12 @@ import { methodSteps } from '@/data/method';
 >
   <div aria-hidden="true" class="tech-grid opacity-70"></div>
   <div aria-hidden="true" class="noise-layer"></div>
+  <SectionBackdrop
+    src={backdrop}
+    class="top-4 right-0 hidden w-[34rem] lg:block xl:w-[40rem]"
+    opacity={18}
+    flip
+  />
   <GhostText
     text="MÉTODO"
     variant="outline"

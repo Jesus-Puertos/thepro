@@ -20,12 +20,33 @@
  *  - `[data-reveal="up|fade|left|scale|rule"]` → revelado genérico.
  *  - `[data-hero]` → se anima en la línea de tiempo del hero, no con scroll.
  *  - `[data-parallax="0.15"]` → parallax suave (solo puntero fino y ≥1024px).
+ *
+ * REGLA: `data-reveal` nunca puede aparecer dentro de una isla de React. Ver
+ * `revealTargets()` más abajo.
  */
 
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const REVEAL_SELECTOR = '[data-reveal]:not([data-hero]):not([data-reveal="rule"])';
+
+/**
+ * Elementos que GSAP puede animar.
+ *
+ * Se descarta todo lo que viva dentro de una isla de React. Ese DOM lo posee
+ * React: si GSAP le escribe estilos y un `data-revealed` antes de que hidrate,
+ * React encuentra atributos que él no renderizó y lanza un error de hidratación
+ * ("some attributes of the server rendered HTML didn't match"). Las islas se
+ * encargan de sus propias animaciones.
+ *
+ * Se filtra con `closest()` en vez de con `:not(astro-island *)` porque el
+ * soporte de selectores complejos dentro de `:not()` es más irregular.
+ */
+function revealTargets(selector: string): HTMLElement[] {
+  return gsap.utils
+    .toArray<HTMLElement>(selector)
+    .filter((element) => !element.closest('astro-island'));
+}
 
 /** Estados iniciales. Deben coincidir con `src/styles/animations.css`. */
 const FROM_STATE = {
@@ -81,8 +102,8 @@ export function initMotion(): void {
 }
 
 function buildHeroTimeline(): void {
-  const lines = gsap.utils.toArray<HTMLElement>('[data-hero-line]');
-  const items = gsap.utils.toArray<HTMLElement>('[data-reveal][data-hero]');
+  const lines = revealTargets('[data-hero-line]');
+  const items = revealTargets('[data-reveal][data-hero]');
 
   if (lines.length === 0 && items.length === 0) return;
 
@@ -121,7 +142,7 @@ function buildHeroTimeline(): void {
 }
 
 function buildScrollReveals(): void {
-  ScrollTrigger.batch(REVEAL_SELECTOR, {
+  ScrollTrigger.batch(revealTargets(REVEAL_SELECTOR), {
     start: 'top 88%',
     once: true,
     onEnter: (batch) => {
@@ -142,7 +163,7 @@ function buildScrollReveals(): void {
   });
 
   // Reglas horizontales que se dibujan de izquierda a derecha.
-  ScrollTrigger.batch('[data-reveal="rule"]', {
+  ScrollTrigger.batch(revealTargets('[data-reveal="rule"]'), {
     start: 'top 92%',
     once: true,
     onEnter: (batch) => {
@@ -170,7 +191,7 @@ function buildScrollReveals(): void {
  */
 function scheduleSafetySweep(): void {
   window.setTimeout(() => {
-    const pending = document.querySelectorAll<HTMLElement>(
+    const pending = revealTargets(
       '[data-reveal]:not([data-revealed]), [data-hero-line]:not([data-revealed])',
     );
 

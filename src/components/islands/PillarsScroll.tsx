@@ -9,18 +9,10 @@ interface PillarsScrollProps {
   benefits: Benefit[];
 }
 
-type SlotRole = 'center' | 'left' | 'right' | 'back';
-
-/** Colocación de cada figura según su papel en la rotación. */
-const SLOTS: Record<SlotRole, { transform: string; opacity: number; blur: number; z: number }> = {
-  center: { transform: 'translateX(0) scale(1)', opacity: 1, blur: 0, z: 30 },
-  left: { transform: 'translateX(-58%) scale(0.58)', opacity: 0.26, blur: 3, z: 20 },
-  right: { transform: 'translateX(58%) scale(0.58)', opacity: 0.26, blur: 3, z: 20 },
-  back: { transform: 'translateY(-8%) scale(0.38)', opacity: 0.12, blur: 4.5, z: 10 },
-};
-
 /** Alto de scroll reservado a cada pilar, en vh. */
 const STEP_VH = 85;
+
+const EASE = 'cubic-bezier(0.4, 0, 0.2, 1)';
 
 /**
  * Los cuatro pilares, recorridos con el scroll.
@@ -117,19 +109,11 @@ export default function PillarsScroll({ slides, benefits }: PillarsScrollProps) 
 
       window.scrollTo({
         top: top + (scrollable * index) / slides.length + 4,
-        behavior: 'matchMedia' in window ? 'smooth' : 'auto',
+        behavior: 'smooth',
       });
     },
     [slides.length],
   );
-
-  const roleFor = (index: number): SlotRole => {
-    const distance = (index - active + slides.length) % slides.length;
-    if (distance === 0) return 'center';
-    if (distance === 1) return 'right';
-    if (distance === slides.length - 1) return 'left';
-    return 'back';
-  };
 
   if (!enhanced) {
     return <StackedPillars slides={slides} benefits={benefits} />;
@@ -138,11 +122,7 @@ export default function PillarsScroll({ slides, benefits }: PillarsScrollProps) 
   const current = slides[active];
 
   return (
-    <div
-      ref={wrapperRef}
-      className="relative"
-      style={{ height: `${slides.length * STEP_VH}vh` }}
-    >
+    <div ref={wrapperRef} className="relative" style={{ height: `${slides.length * STEP_VH}vh` }}>
       <div
         ref={stageRef}
         className="sticky top-0 flex h-svh flex-col overflow-hidden pt-(--header-h)"
@@ -151,24 +131,16 @@ export default function PillarsScroll({ slides, benefits }: PillarsScrollProps) 
         {/* Halo de acento, sincronizado con el pilar activo. */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 right-[26%] h-136 w-136 -translate-y-1/2 rounded-full"
+          className="pointer-events-none absolute top-1/2 right-[18%] h-136 w-136 -translate-y-1/2 rounded-full"
           style={{
             background: current
-              ? `radial-gradient(circle, rgb(${current.accent} / 0.22) 0%, rgb(${current.accent} / 0.06) 44%, transparent 72%)`
+              ? `radial-gradient(circle, rgb(${current.accent} / 0.2) 0%, rgb(${current.accent} / 0.05) 46%, transparent 72%)`
               : undefined,
-            transition: 'background 650ms cubic-bezier(0.4, 0, 0.2, 1)',
+            transition: `background 650ms ${EASE}`,
           }}
         />
 
-        <div
-          aria-hidden="true"
-          className="ghost-text ghost-text--sm ghost-text--outline absolute top-1/2 right-[6%] -translate-y-1/2"
-          key={current?.ghost}
-        >
-          {current?.ghost}
-        </div>
-
-        <div className="relative mx-auto grid w-full max-w-content flex-1 grid-cols-1 items-center gap-8 px-5 sm:px-8 lg:grid-cols-12 lg:px-10">
+        <div className="relative mx-auto grid w-full max-w-content flex-1 grid-cols-1 items-center gap-10 px-5 sm:px-8 lg:grid-cols-12 lg:px-10">
           {/* --- Panel de texto: los cuatro apilados en la misma celda --- */}
           <div className="grid lg:col-span-5">
             {slides.map((slide, index) => {
@@ -231,50 +203,77 @@ export default function PillarsScroll({ slides, benefits }: PillarsScrollProps) 
             })}
           </div>
 
-          {/* --- Escenario de figuras --- */}
-          <div className="relative h-104 lg:col-span-7 lg:h-136">
+          {/* --- Escenario a sangre ---
+              Sin marco a propósito: encajonar las imágenes le quita toda la
+              fuerza, sobre todo al recorte del coach, que acaba flotando en un
+              rectángulo vacío. Aquí cada pieza sangra y se funde con el negro. */}
+          <div className="relative h-[52vh] max-h-[34rem] lg:col-span-7 lg:h-[64vh] lg:max-h-[42rem]">
+            {/* La palabra va DETRÁS de la imagen. Como las piezas se disuelven
+                por abajo, asoma por la banda inferior en las cuatro. */}
+            <span
+              key={current?.ghost}
+              aria-hidden="true"
+              className="ghost-text ghost-text--sm ghost-text--outline absolute bottom-[2%] left-1/2 z-0 -translate-x-1/2"
+            >
+              {current?.ghost}
+            </span>
+
             {slides.map((slide, index) => {
-              const slot = SLOTS[roleFor(index)];
+              const isActive = index === active;
+              const isCutout = slide.kind === 'cutout';
+
+              // La figura recortada va de pie y a toda altura; las piezas 16:9
+              // llenan el escenario y se disuelven por el borde izquierdo.
+              const mask = isCutout
+                ? 'linear-gradient(to bottom, black 80%, transparent 100%)'
+                : 'linear-gradient(to right, transparent 0%, black 24%), linear-gradient(to bottom, black 76%, transparent 100%)';
 
               return (
-                <figure
+                <img
                   key={slide.id}
-                  aria-hidden="true"
-                  className="absolute inset-x-0 top-0 bottom-0 m-0 flex items-end justify-center"
+                  src={slide.image.src}
+                  srcSet={slide.image.srcset || undefined}
+                  sizes="(min-width: 1024px) 58vw, 100vw"
+                  width={slide.image.width}
+                  height={slide.image.height}
+                  alt=""
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  className={`absolute inset-0 z-10 h-full w-full ${
+                    isCutout ? 'object-contain object-bottom' : 'object-cover'
+                  }`}
                   style={{
-                    transform: slot.transform,
-                    opacity: slot.opacity,
-                    filter: slot.blur > 0 ? `blur(${slot.blur}px)` : undefined,
-                    zIndex: slot.z,
-                    transition:
-                      'transform 650ms cubic-bezier(0.4, 0, 0.2, 1), opacity 650ms cubic-bezier(0.4, 0, 0.2, 1), filter 650ms cubic-bezier(0.4, 0, 0.2, 1)',
-                    willChange: 'transform, opacity',
+                    objectPosition: isCutout ? undefined : slide.focus,
+                    opacity: isActive ? 1 : 0,
+                    // El zoom se va soltando conforme avanza el scroll dentro
+                    // del paso: liga la imagen al movimiento sin dar tumbos.
+                    transform: isActive
+                      ? 'scale(calc(1.04 - var(--sub) * 0.04))'
+                      : 'scale(1.06)',
+                    transition: `opacity 650ms ${EASE}, transform 900ms ${EASE}`,
+                    filter: isCutout
+                      ? 'contrast(1.06) saturate(0.85) brightness(0.95)'
+                      : 'contrast(1.08) saturate(0.92) brightness(0.9)',
+                    maskImage: mask,
+                    WebkitMaskImage: mask,
+                    maskComposite: isCutout ? undefined : 'intersect',
+                    WebkitMaskComposite: isCutout ? undefined : 'source-in',
                   }}
-                >
-                  <img
-                    src={slide.image.src}
-                    srcSet={slide.image.srcset || undefined}
-                    sizes="(min-width: 1024px) 34rem, 80vw"
-                    width={slide.image.width}
-                    height={slide.image.height}
-                    alt=""
-                    loading={index === 0 ? 'eager' : 'lazy'}
-                    decoding="async"
-                    className="h-full w-auto max-w-none object-contain object-bottom"
-                    style={{
-                      transform: `translateX(${(50 - slide.focusX).toFixed(1)}%)`,
-                      filter:
-                        slide.id === 'coaching'
-                          ? 'contrast(1.05) saturate(0.8) brightness(0.95)'
-                          : 'grayscale(1) contrast(1.15) brightness(0.9)',
-                      maskImage: 'linear-gradient(to bottom, black 82%, transparent 100%)',
-                      WebkitMaskImage:
-                        'linear-gradient(to bottom, black 82%, transparent 100%)',
-                    }}
-                  />
-                </figure>
+                />
               );
             })}
+
+            <div aria-hidden="true" className="scanlines z-20 opacity-20" />
+
+            {/* Filo de acento que avanza con el scroll dentro del pilar. */}
+            <div
+              aria-hidden="true"
+              className="absolute right-0 bottom-0 left-0 z-20 h-0.5 origin-left"
+              style={{
+                backgroundColor: current ? `rgb(${current.accent})` : undefined,
+                transform: 'scaleX(var(--sub))',
+              }}
+            />
           </div>
         </div>
 
@@ -335,41 +334,46 @@ function StackedPillars({ slides, benefits }: PillarsScrollProps) {
           const benefit = benefits.find((item) => item.id === slide.id);
 
           return (
-            <li key={slide.id} className="panel" data-reveal="up">
+            <li key={slide.id} className="panel">
               <div className="panel-inner flex h-full flex-col">
-                <figure className="relative m-0 h-44 overflow-hidden">
-                  <div
-                    aria-hidden="true"
-                    className="absolute inset-0"
-                    style={{
-                      background: `radial-gradient(circle at 50% 80%, rgb(${slide.accent} / 0.2) 0%, transparent 68%)`,
-                    }}
-                  />
+                <figure className="relative m-0 aspect-16/9 overflow-hidden">
+                  {/* Mismo criterio que en escritorio: el recorte va de pie y
+                      la pieza 16:9 llena la caja. */}
                   <img
                     src={slide.image.src}
                     srcSet={slide.image.srcset || undefined}
                     sizes="(min-width: 640px) 45vw, 90vw"
                     width={slide.image.width}
                     height={slide.image.height}
-                    alt=""
+                    alt={slide.image.alt}
                     loading={index === 0 ? 'eager' : 'lazy'}
                     decoding="async"
-                    className="relative h-full w-auto max-w-none object-contain object-bottom"
+                    className={`h-full w-full ${
+                      slide.kind === 'cutout'
+                        ? 'object-contain object-bottom'
+                        : 'object-cover'
+                    }`}
                     style={{
-                      margin: '0 auto',
-                      transform: `translateX(${(50 - slide.focusX).toFixed(1)}%)`,
-                      filter:
-                        slide.id === 'coaching'
-                          ? 'contrast(1.05) saturate(0.8) brightness(0.95)'
-                          : 'grayscale(1) contrast(1.15) brightness(0.9)',
-                      maskImage: 'linear-gradient(to bottom, black 74%, transparent 100%)',
-                      WebkitMaskImage:
-                        'linear-gradient(to bottom, black 74%, transparent 100%)',
+                      objectPosition: slide.kind === 'cutout' ? undefined : slide.focus,
+                      filter: 'contrast(1.06) saturate(0.92) brightness(0.9)',
                     }}
+                  />
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0"
+                    style={{
+                      background:
+                        'linear-gradient(to top, var(--color-surface) 2%, transparent 45%)',
+                    }}
+                  />
+                  <div
+                    aria-hidden="true"
+                    className="absolute right-0 bottom-0 left-0 h-0.5"
+                    style={{ backgroundColor: `rgb(${slide.accent})` }}
                   />
                 </figure>
 
-                <div className="flex flex-1 flex-col gap-3 p-6 pt-0">
+                <div className="flex flex-1 flex-col gap-3 p-6">
                   <p className="eyebrow flex items-center gap-3">
                     <span
                       className="font-bold tabular-nums"

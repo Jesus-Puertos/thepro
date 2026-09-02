@@ -2,21 +2,32 @@
 import Container from '@/components/layout/Container.astro';
 import PrimaryButton from '@/components/ui/PrimaryButton.astro';
 import GhostText from '@/components/ui/GhostText.astro';
+import SectionBackdrop from '@/components/ui/SectionBackdrop.astro';
 import { offer } from '@/data/site';
+
+import backdrop from '@assets/right_legend.png';
 ---
 
-<section id="empezar" class="relative isolate overflow-hidden py-24 lg:py-36">
+<section id="empezar" class="relative isolate overflow-hidden py-24 lg:py-40">
+  <SectionBackdrop
+    src={backdrop}
+    class="top-1/2 right-0 z-[-2] hidden w-[36rem] -translate-y-1/2 lg:block xl:w-[42rem]"
+    opacity={20}
+  />
+
+  <div aria-hidden="true" class="final-scrim"></div>
   <div aria-hidden="true" class="final-beams"></div>
-  <div aria-hidden="true" class="tech-grid opacity-70"></div>
+  <div aria-hidden="true" class="tech-grid opacity-50"></div>
   <div aria-hidden="true" class="noise-layer"></div>
   <GhostText
-    text="ALCANZA TU PRIME"
+    text="PRIME"
     size="sm"
-    class="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-60"
+    variant="outline"
+    class="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
   />
 
   <Container class="relative">
-    <div class="flex max-w-3xl flex-col gap-8">
+    <div class="flex max-w-2xl flex-col gap-8">
       <p class="eyebrow tick-red" data-reveal="fade">Último paso</p>
 
       <h2 class="h2 text-white">
@@ -50,6 +61,15 @@ import { offer } from '@/data/site';
 </section>
 
 <style>
+  /* Fondo base. La ilustración va encima, y los haces encima de ella. */
+  .final-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: -3;
+    background:
+      linear-gradient(to bottom, #050505 0%, #0b0707 55%, #050505 100%);
+  }
+
   .final-beams {
     position: absolute;
     inset: 0;
@@ -57,11 +77,11 @@ import { offer } from '@/data/site';
     background:
       radial-gradient(
         ellipse 55% 62% at 88% 50%,
-        rgb(217 45 39 / 0.26) 0%,
-        rgb(143 23 20 / 0.1) 44%,
+        rgb(217 45 39 / 0.2) 0%,
+        rgb(143 23 20 / 0.08) 44%,
         transparent 74%
       ),
-      radial-gradient(ellipse 40% 40% at 6% 6%, rgb(214 166 44 / 0.08) 0%, transparent 68%),
-      linear-gradient(to bottom, #050505, #0b0707 60%, #050505);
+      radial-gradient(ellipse 40% 40% at 6% 6%, rgb(214 166 44 / 0.07) 0%, transparent 68%);
   }
+
 </style>

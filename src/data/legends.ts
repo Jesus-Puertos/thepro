@@ -1,17 +1,22 @@
 import type { CarouselSlideContent } from '@/types';
 
 import coachCutout from '@assets/the_pro_sin_fondo.png';
-import figurePlatform from '@assets/right-legend.png';
-import figureFeedback from '@assets/left_legend.png';
-import figureCommunity from '@assets/right_legend.png';
+import platformArt from '@assets/plataforma_aprendizaje.png';
+import feedbackArt from '@assets/feedback.png';
+import communityPhoto from '@assets/equipo_esports.png';
 
 /**
- * Diapositivas del carrusel de pilares (sección "Qué incluye").
+ * Los cuatro pilares de la sección "Qué incluye".
  *
- * IMPORTANTE — propiedad intelectual: tres de las cuatro figuras son ilustraciones
- * del universo de Apex Legends incluidas en `assets/`. Están documentadas en
- * `THIRD_PARTY_ASSETS.md` y deben sustituirse o licenciarse antes de publicar
- * comercialmente. Cambiarlas es una edición de una sola línea en este archivo.
+ * `focus` es el `object-position` del recorte. Tres de las cuatro imágenes son
+ * 16:9 con el sujeto claramente a la derecha (centroide de luminancia en el
+ * 69–70 %), así que centrarlas dejaría fuera justo lo que se quiere enseñar.
+ * El recorte del coach empieza arriba para no cortarle la cabeza.
+ *
+ * IMPORTANTE — propiedad intelectual: las dos piezas de key art son material de
+ * Electronic Arts / Respawn. Están documentadas en `THIRD_PARTY_ASSETS.md` y
+ * deben licenciarse o sustituirse antes de publicar comercialmente. Cambiarlas
+ * es editar el `import` y el `focus` de la diapositiva, nada más.
  */
 export const carouselSlides: readonly CarouselSlideContent[] = [
   {
@@ -26,7 +31,8 @@ export const carouselSlides: readonly CarouselSlideContent[] = [
     ghost: 'COACH',
     image: coachCutout,
     imageAlt: 'The Pro, coach de The Apex Prime, con los brazos cruzados',
-    focusX: 49,
+    focus: '48% 0%',
+    kind: 'cutout',
   },
   {
     id: 'platform',
@@ -38,9 +44,11 @@ export const carouselSlides: readonly CarouselSlideContent[] = [
     highlight: 'A tu ritmo',
     accent: '214 166 44',
     ghost: 'CURSOS',
-    image: figurePlatform,
-    imageAlt: 'Ilustración monocroma de una leyenda de Apex Legends',
-    focusX: 49,
+    image: platformArt,
+    imageAlt:
+      'Escena de Apex Legends: tres personajes estudian paneles holográficos con información táctica',
+    focus: '70% 50%',
+    kind: 'scene',
   },
   {
     id: 'feedback',
@@ -52,9 +60,11 @@ export const carouselSlides: readonly CarouselSlideContent[] = [
     highlight: 'Contacto directo',
     accent: '241 239 232',
     ghost: 'REVIEW',
-    image: figureFeedback,
-    imageAlt: 'Ilustración monocroma de una leyenda de Apex Legends en movimiento',
-    focusX: 15,
+    image: feedbackArt,
+    imageAlt:
+      'Escena de Apex Legends: tres personajes trazan una ruta sobre un mapa táctico iluminado en rojo',
+    focus: '69% 50%',
+    kind: 'scene',
   },
   {
     id: 'community',
@@ -66,8 +76,9 @@ export const carouselSlides: readonly CarouselSlideContent[] = [
     highlight: 'Encuentra equipo',
     accent: '217 45 39',
     ghost: 'SQUAD',
-    image: figureCommunity,
-    imageAlt: 'Ilustración monocroma de una leyenda de Apex Legends con lanzacohetes',
-    focusX: 76,
+    image: communityPhoto,
+    imageAlt: 'Tres jugadores de un equipo de esports con sus mandos, en uniforme',
+    focus: '52% 40%',
+    kind: 'scene',
   },
 ];

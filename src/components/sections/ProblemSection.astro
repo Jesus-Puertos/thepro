@@ -2,11 +2,18 @@
 import Container from '@/components/layout/Container.astro';
 import SectionHeading from '@/components/ui/SectionHeading.astro';
 import GhostText from '@/components/ui/GhostText.astro';
+import SectionBackdrop from '@/components/ui/SectionBackdrop.astro';
+import backdrop from '@assets/vantage.png';
 import { problems } from '@/data/problems';
 ---
 
 <section id="problema" class="relative overflow-hidden py-20 lg:py-28">
   <div aria-hidden="true" class="tech-grid opacity-60"></div>
+  <SectionBackdrop
+    src={backdrop}
+    class="bottom-0 left-0 hidden w-[30rem] lg:block xl:w-[34rem]"
+    opacity={16}
+  />
   {/* `right-[3%]`, no negativo: con el desbordamiento anterior la sección
       recortaba la T final y "RESET" se leía como "RESE". */}
   <GhostText

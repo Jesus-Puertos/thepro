@@ -17,7 +17,10 @@ qué queda pendiente de aclarar antes de publicar comercialmente.
 | --- | --- | --- |
 | `assets/the_pro_sin_fondo.png` | Figura del hero y primera diapositiva del carrusel | Recorte con canal alfa real (1024×1024, sujeto en x 196–803). Se integra con máscaras CSS, sin deformar la foto. |
 | `assets/thepro.webp` | Retrato en la sección «Conoce a The Pro» y como imagen social (Open Graph) | 1080×1080. Se recorta a 1200×630 en build para Open Graph. |
-| `assets/thepro_mini_logo.png` | Logotipo del header, del footer y favicon (`public/favicon.png`) | **No se ha alterado** ni recoloreado (context.md §12.8). Es el único archivo copiado a `public/`, porque el favicon debe servirse desde una ruta estable. |
+| `assets/LOGO_alta_resolucion.png` | Logotipo del header y del footer | 645×483 con canal alfa. **No se ha alterado** ni recoloreado (context.md §12.8). Sustituye a `thepro_mini_logo.png`, que medía 70×70 y no tenía transparencia. Es 4:3, así que se dibuja en 48×36 y 64×48 — nunca en un cuadrado, que lo deformaría. |
+| `public/favicon.png` | Favicon | Derivado del logo en alta resolución: 512×512 con el logo centrado sobre lienzo transparente, porque un favicon debe ser cuadrado. Es el único archivo copiado a `public/`, ya que el favicon necesita una ruta estable. |
+| `assets/equipo_esports.png` | Imagen del pilar 04, «Discord y comunidad» | Foto real de un equipo, ya en negro con haces rojos y dorados: la paleta de la marca. El `alt` describe lo que se ve («tres jugadores de un equipo de esports con sus mandos») sin afirmar quiénes son ni vincularlos al programa. 1,9 MB de origen → 14–74 kB en WebP. |
+| `assets/thepro_mini_logo.png` | Ya no se usa | Reemplazado por el logo en alta resolución. Se deja intacto. |
 
 Licencia: se asume propiedad de The Apex Prime. **Pendiente:** confirmar por
 escrito quién tiene los derechos de las fotografías (fotógrafo / cesión).
@@ -50,21 +53,36 @@ de marca de cada fabricante.
 
 > ⚠️ **Acción requerida antes del lanzamiento.**
 
-| Archivo | Uso actual | Riesgo |
-| --- | --- | --- |
-| `assets/left_legend.png` | Figura del pilar 03 en el carrusel | Ilustración de personaje de Apex Legends. Propiedad de Electronic Arts / Respawn Entertainment. |
-| `assets/right_legend.png` | Figura del pilar 04 | Ídem. |
-| `assets/right-legend.png` | Figura del pilar 02 | Ídem. |
+### Imágenes de los pilares
 
-Se aplican en monocromo (`grayscale(1)`) como elementos decorativos de fondo,
-nunca como logotipo ni como sello de aprobación, y el footer incluye un descargo
-de no afiliación. Aun así **son material protegido**.
+| Archivo | Uso actual |
+| --- | --- |
+| `assets/plataforma_aprendizaje.png` | Imagen del pilar 02, «Plataforma de aprendizaje» |
+| `assets/feedback.png` | Imagen del pilar 03, «Feedback y acompañamiento» |
 
-**Cómo sustituirlas:** las tres están centralizadas en
-[`src/data/legends.ts`](src/data/legends.ts). Cambiar el `import` y el valor
-`focusX` de cada diapositiva es todo lo que hace falta; no hay que tocar el
-componente. Alternativas válidas: ilustración propia encargada, siluetas
-abstractas o capturas de las propias sesiones de coaching.
+Son key art de Apex Legends, propiedad de Electronic Arts / Respawn Entertainment.
+Se muestran dentro de un panel, recortadas con `object-position` según el
+centroide de luminancia de cada una (69–70 %, porque el sujeto está a la derecha).
+
+**Cómo sustituirlas:** están centralizadas en
+[`src/data/legends.ts`](src/data/legends.ts). Cambiar el `import` y el `focus`
+de la diapositiva es todo lo que hace falta; no hay que tocar el componente.
+
+### Ilustraciones de fondo
+
+| Archivo | Uso actual |
+| --- | --- |
+| `assets/vantage.png` | Fondo de la sección «El problema». Es el antiguo `right-legend.png`, renombrado por el cliente. |
+| `assets/left_legend.png` | Fondo de la sección «Método» |
+| `assets/right_legend.png` | Fondo del CTA final |
+
+Las tres pasan por `SectionBackdrop.astro`, que les aplica el mismo tratamiento:
+monocromo, opacidad del 5–7 % y bordes desvanecidos con máscara radial. Nunca
+como logotipo ni como sello de aprobación, y el footer incluye un descargo de no
+afiliación. Aun así **son material protegido**.
+
+Alternativas válidas para todo lo anterior: ilustración propia encargada,
+siluetas abstractas o capturas de las propias sesiones de coaching.
 
 ---
 
@@ -80,6 +98,14 @@ necesita en otro contexto.
 | `assets/apex_logo.svg` | Marca triangular de Apex Legends. En su lugar, la forma en «A» del hero y de la escena 3D es geometría original (`.hero-chevron` y `ApexScene.tsx`). |
 | `assets/ALGS_Y6_WebsiteBanner.jpg` | Banner promocional oficial del Year 6. Reutilizarlo sería copiar material de campaña de EA. |
 | `assets/ALGS_Background_Textures_Scannerline_Map.png` | Textura oficial. Las scanlines del sitio se generan con `repeating-linear-gradient` en CSS: cero riesgo de propiedad intelectual, cero bytes descargados y mejor rendimiento. |
+
+---
+
+## 4 bis. Archivos que no usa el sitio
+
+| Archivo | Nota |
+| --- | --- |
+| `assets/registros.xlsx` | No se referencia desde ningún sitio y, al no importarse, Astro no lo copia a `dist/` — no se publicaría. Aun así **contiene registros de personas y está dentro del repositorio**: conviene sacarlo de `assets/` y guardarlo fuera del control de versiones. Solo se leyó su número de filas (2, encabezado incluido), nunca su contenido. |
 
 ---
 

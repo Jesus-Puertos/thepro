@@ -18,7 +18,7 @@ const slides: CarouselSlide[] = await Promise.all(
   carouselSlides.map(async ({ image, imageAlt, ...content }) => {
     const optimized = await getImage({
       src: image,
-      widths: [340, 520, 760],
+      widths: [420, 760, 1120, 1440],
       format: 'webp',
     });
 
