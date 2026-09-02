@@ -1,0 +1,149 @@
+---
+/**
+ * Envoltura de las páginas legales.
+ *
+ * Estos documentos crean obligaciones, así que aquí no se inventa nada: se
+ * publica lo que `context.md` confirma y todo lo demás queda marcado con
+ * `.legal-pending`, visible en la propia página. Mientras `draft` sea `true`
+ * la página sale con `noindex`, fuera del sitemap y con un aviso arriba.
+ */
+import MainLayout from '@/layouts/MainLayout.astro';
+import Container from '@/components/layout/Container.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { site } from '@/data/site';
+
+interface Props {
+  title: string;
+  kicker: string;
+  summary: string;
+  /** Borrador sin revisión jurídica. Al ponerlo en `false`, quitar también la regla de `robots.txt.ts` y el filtro del sitemap. */
+  draft?: boolean;
+}
+
+const { title, kicker, summary, draft = true } = Astro.props as Props;
+---
+
+<MainLayout title={`${title} | ${site.name}`} description={summary} noindex={draft}>
+  <article class="relative overflow-hidden py-20 lg:py-28">
+    <div aria-hidden="true" class="tech-grid opacity-50"></div>
+
+    <Container class="relative" size="narrow">
+      <header class="flex flex-col gap-5">
+        <p class="eyebrow tick-red">{kicker}</p>
+        <h1 class="h2 text-white">{title}</h1>
+        <p class="lead">{summary}</p>
+        <div class="rule-tech mt-2 w-40"></div>
+      </header>
+
+      {
+        draft && (
+          <aside class="panel mt-10" style="--cut:14px">
+            <div class="panel-inner flex gap-4 p-5 sm:p-6">
+              <span class="text-gold mt-0.5 shrink-0">
+                <Icon name="shield-check" size={20} />
+              </span>
+              <div class="flex flex-col gap-2">
+                <p class="label-tech text-gold">Borrador sin revisión jurídica</p>
+                <p class="body-text-sm">
+                  Este documento recoge únicamente la información confirmada del programa.
+                  Los puntos marcados en dorado están sin definir y deben resolverse antes
+                  de publicarlo. No sustituye la revisión de un profesional.
+                </p>
+              </div>
+            </div>
+          </aside>
+        )
+      }
+
+      <div class="legal-prose mt-12">
+        <slot />
+      </div>
+
+      <footer class="mt-14 border-t border-(--color-border) pt-8">
+        <p class="body-text-sm">
+          ¿Dudas sobre este documento? Escríbenos a{' '}
+          <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>.
+        </p>
+      </footer>
+    </Container>
+  </article>
+</MainLayout>
+
+<style is:global>
+  .legal-prose {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .legal-prose section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+  }
+
+  .legal-prose h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.375rem, 2.6vw, 1.75rem);
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--color-white);
+  }
+
+  .legal-prose h3 {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-white);
+    margin-top: 0.5rem;
+  }
+
+  .legal-prose p,
+  .legal-prose li {
+    font-size: 0.9375rem;
+    line-height: 1.68;
+    color: rgb(241 239 232 / 0.72);
+    text-wrap: pretty;
+  }
+
+  .legal-prose ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-left: 1.125rem;
+    list-style: disc;
+  }
+
+  .legal-prose ::marker {
+    color: var(--color-red);
+  }
+
+  .legal-prose a {
+    color: var(--color-gold);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    word-break: break-word;
+  }
+
+  .legal-prose a:hover {
+    color: var(--color-white);
+  }
+
+  .legal-prose strong {
+    color: var(--color-white);
+    font-weight: 600;
+  }
+
+  /* Marca visible de "esto todavía no está definido". */
+  .legal-pending {
+    display: inline-block;
+    padding: 0.1rem 0.45rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    background: rgb(214 166 44 / 0.1);
+    box-shadow: inset 0 0 0 1px rgb(214 166 44 / 0.38);
+  }
+</style>

@@ -19,8 +19,32 @@ Nada de esta lista se ha inventado ni se publica como afirmación cerrada.
 | 5 | Logros verificables de The Pro (alias profesional, rango máximo, equipos, torneos, años dando coaching, sesiones impartidas, resultados de alumnos) | `src/components/sections/CoachSection.astro` → `confirmedFacts` | Solo se publican los tres datos confirmados en `context.md`. context.md advierte que la autoridad no puede apoyarse únicamente en «llevo seis años jugando». |
 | 6 | Dominio definitivo | `astro.config.mjs` (`SITE_URL`) y `src/data/site.ts` (`site.url`) | Placeholder `https://theapexprime.com`. Afecta a canonical, Open Graph y a la URL de la imagen social. |
 | 7 | URLs reales de Instagram y Twitch | `src/data/site.ts` → `socials` | Enlaces `#`. |
-| 8 | Páginas de términos, privacidad y política de pagos | `src/data/site.ts` → `legalLinks` | Enlaces `#`. |
+| 8 | Cerrar las páginas legales | `src/pages/terminos.astro`, `privacidad.astro`, `pagos.astro` | Las tres existen y recogen lo confirmado, pero siguen en **borrador**: `noindex`, fuera del sitemap, bloqueadas en `robots.txt` y con aviso visible. Hay 18 marcas «Por definir» repartidas. |
+| 8.1 | Razón social, domicilio y RFC del responsable | `terminos.astro` §1 y `privacidad.astro` §1 | La LFPDPPP exige identificar al responsable con nombre y domicilio; el correo no basta. |
+| 8.2 | Ley aplicable y jurisdicción | `terminos.astro` §9 | |
+| 8.3 | Plazos de conservación de datos y proveedores con los que se comparten | `privacidad.astro` §4 y §7 | |
+| 8.4 | URL real de la plataforma de pago | `src/data/site.ts` → `offer.checkoutUrl` | Hoy es un acortador. TinyURL **no garantiza** reenviar la query string, así que la atribución UTM puede perderse justo en el paso que importa. |
 | 9 | Autorización o sustitución de las ilustraciones de Apex Legends | `src/data/legends.ts` | Ver [`THIRD_PARTY_ASSETS.md`](THIRD_PARTY_ASSETS.md) §3. |
+
+---
+
+## Antes de encender las campañas
+
+**Conectar las etiquetas.** Ya está el hueco: basta con rellenar `PUBLIC_GA4_ID`
+y `PUBLIC_META_PIXEL_ID` en un `.env` (ver `.env.example`). Sin esas variables la
+página no carga ningún script de terceros.
+
+**Consentimiento.** Al activarlas, las etiquetas cargan de inmediato. Para la
+LFPDPPP hace falta, como mínimo, que el aviso de privacidad esté publicado y
+explique qué se recoge. Si alguna vez hay tráfico del EEE, además haría falta un
+banner de consentimiento previo, que no está construido.
+
+**UTM en los enlaces de campaña.** La página ya captura y propaga los
+parámetros, pero hay que publicarlos en los enlaces de Instagram y Facebook:
+
+```text
+?utm_source=instagram&utm_medium=social&utm_campaign=apex_prime
+```
 
 ---
 

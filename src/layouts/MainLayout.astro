@@ -1,30 +1,37 @@
 ---
 import { getImage } from 'astro:assets';
 
+import AnalyticsScripts from '@/components/layout/AnalyticsScripts.astro';
 import Header from '@/components/layout/Header.astro';
 import Footer from '@/components/layout/Footer.astro';
 import { site, offer } from '@/data/site';
 import { structuredFaq } from '@/data/faq';
 
 import '@/styles/global.css';
-import ogSource from '@assets/thepro.webp';
+import ogSource from '../../assets/og-the-apex-prime.png';
 
 interface Props {
   title?: string;
   description?: string;
+  /** Para páginas legales en borrador y la 404. */
+  noindex?: boolean;
 }
 
-const { title = site.seo.title, description = site.seo.description } = Astro.props;
+const {
+  title = site.seo.title,
+  description = site.seo.description,
+  noindex = false,
+} = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
 
-// Imagen social 1200×630 derivada de la foto del coach.
+// Portada social dedicada; Astro la normaliza al formato Open Graph 1200×630.
 const ogImage = await getImage({
   src: ogSource,
   width: 1200,
   height: 630,
   fit: 'cover',
-  position: 'top',
+  position: 'center',
   format: 'jpg',
 });
 const ogImageUrl = new URL(ogImage.src, Astro.site ?? site.url).href;
@@ -74,6 +81,7 @@ const faqSchema = {
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
 
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="theme-color" content="#050505" />
@@ -120,6 +128,8 @@ const faqSchema = {
         }, 2500);
       })();
     </script>
+
+    <AnalyticsScripts />
 
     <script is:inline type="application/ld+json" set:html={JSON.stringify(productSchema)} />
     {

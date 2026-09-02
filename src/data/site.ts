@@ -69,11 +69,15 @@ export const socials: readonly SocialLink[] = [
   { label: 'Twitch', href: '#' },
 ];
 
+/**
+ * Las tres páginas existen y recogen lo confirmado, pero siguen en borrador:
+ * salen con `noindex`, fuera del sitemap y con un aviso visible. Ver
+ * `src/components/layout/LegalPage.astro`.
+ */
 export const legalLinks: readonly SocialLink[] = [
-  // TODO(pendiente): publicar estas páginas antes del lanzamiento.
-  { label: 'Términos y condiciones', href: '#' },
-  { label: 'Política de privacidad', href: '#' },
-  { label: 'Política de pagos y cancelación', href: '#' },
+  { label: 'Términos y condiciones', href: '/terminos' },
+  { label: 'Aviso de privacidad', href: '/privacidad' },
+  { label: 'Política de pagos y cancelación', href: '/pagos' },
 ];
 
 export const disclaimer =

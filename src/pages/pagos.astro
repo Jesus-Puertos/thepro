@@ -1,0 +1,105 @@
+---
+import LegalPage from '@/components/layout/LegalPage.astro';
+import { site, offer, alternativePayments } from '@/data/site';
+---
+
+<LegalPage
+  kicker="Legal"
+  title="Política de pagos y cancelación"
+  summary="Cómo se paga la membresía, cuánto tarda el acceso y qué pasa si quieres darte de baja."
+>
+  <section>
+    <h2>1. Precio</h2>
+    <p>
+      La membresía cuesta <strong>{offer.priceLabel} al mes</strong>, impuestos incluidos
+      salvo que se indique lo contrario en el comprobante.
+    </p>
+    <p>
+      Disponibilidad y precio de referencia para compradores fuera de México:
+      <span class="legal-pending">Por definir</span>
+    </p>
+  </section>
+
+  <section>
+    <h2>2. Formas de pago</h2>
+    <h3>Pago directo desde la plataforma (recomendado)</h3>
+    <p>
+      Es el método más rápido: el acceso se activa de forma inmediata o casi inmediata, sin
+      que tengas que enviar nada.
+    </p>
+
+    <h3>Métodos alternativos</h3>
+    <ul>
+      {
+        alternativePayments.map((method) => (
+          <li>
+            <strong>{method.label}:</strong> {method.detail}
+          </li>
+        ))
+      }
+    </ul>
+    <p>
+      Con estos métodos <strong>es necesario enviar el comprobante</strong> a
+      <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>. El acceso puede tardar
+      <strong>hasta 24 horas</strong> desde que lo recibimos.
+    </p>
+  </section>
+
+  <section>
+    <h2>3. Qué recibes al pagar</h2>
+    <ul>
+      <li>Acceso a la plataforma de cursos.</li>
+      <li>Invitación al Discord del programa.</li>
+      <li>Acceso a las sesiones en vivo de lunes a viernes y a sus grabaciones.</li>
+    </ul>
+    <p>
+      Flujo exacto de entrega del acceso a Discord:
+      <span class="legal-pending">Por definir</span>
+    </p>
+  </section>
+
+  <section>
+    <h2>4. Renovación</h2>
+    <p>
+      Si el cobro se renueva automáticamente cada mes o requiere un pago manual, y con cuánta
+      antelación se avisa: <span class="legal-pending">Por definir</span>
+    </p>
+    <p>
+      Hasta que este punto esté publicado, escríbenos antes de inscribirte y te lo
+      confirmamos por escrito.
+    </p>
+  </section>
+
+  <section>
+    <h2>5. Cancelación</h2>
+    <p>
+      Procedimiento, plazo de preaviso y momento en que se pierde el acceso:
+      <span class="legal-pending">Por definir</span>
+    </p>
+  </section>
+
+  <section>
+    <h2>6. Devoluciones y garantía</h2>
+    <p>
+      Existencia de un periodo de devolución, sus condiciones y el plazo de reembolso:
+      <span class="legal-pending">Por definir</span>
+    </p>
+    <p>
+      Preferimos decirlo antes de que pagues: si este punto es decisivo para ti, resuélvelo
+      con nosotros antes de inscribirte.
+    </p>
+  </section>
+
+  <section>
+    <h2>7. Cobros incorrectos</h2>
+    <p>
+      Si detectas un cargo duplicado o que no reconoces, escríbenos a
+      <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a> con el comprobante y lo
+      revisamos.
+    </p>
+    <p>
+      Plazo de resolución de incidencias de cobro:
+      <span class="legal-pending">Por definir</span>
+    </p>
+  </section>
+</LegalPage>

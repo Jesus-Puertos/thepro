@@ -16,6 +16,8 @@
  *   trackEvent('carousel_interaction', { slide: 'coaching' });
  */
 
+import { initAttribution, type Attribution } from './attribution';
+
 export type AnalyticsEvent =
   | 'hero_cta_click'
   | 'nav_cta_click'
@@ -66,21 +68,43 @@ function isAnalyticsEvent(value: string): value is AnalyticsEvent {
   return KNOWN_EVENTS.has(value);
 }
 
+/**
+ * Atribución de la sesión. Se resuelve en `initAnalytics()` y se adjunta a cada
+ * evento, para poder separar por campaña sin tocar las llamadas existentes.
+ */
+let attribution: Attribution = {};
+
+/** Eventos que además interesan a Meta como conversión. */
+const META_EVENTS: Partial<Record<AnalyticsEvent, string>> = {
+  checkout_start: 'InitiateCheckout',
+  hero_cta_click: 'Lead',
+  pricing_cta_click: 'Lead',
+  final_cta_click: 'Lead',
+};
+
 /** Registra un evento. Seguro de llamar en SSR: no hace nada sin `window`. */
 export function trackEvent(event: AnalyticsEvent, payload: AnalyticsPayload = {}): void {
   if (typeof window === 'undefined') return;
 
-  const record: TrackedEvent = { event, payload, ts: Date.now() };
+  const enriched: AnalyticsPayload = { ...attribution, ...payload };
+  const record: TrackedEvent = { event, payload: enriched, ts: Date.now() };
 
   const queue = (window.__apexPrimeEvents ??= []);
   queue.push(record);
 
-  window.dataLayer?.push({ event, ...payload });
-  window.gtag?.('event', event, payload);
+  window.dataLayer?.push({ event, ...enriched });
+  window.gtag?.('event', event, enriched);
+
+  const metaEvent = META_EVENTS[event];
+  if (metaEvent) {
+    window.fbq?.('track', metaEvent, enriched);
+  } else {
+    window.fbq?.('trackCustom', event, enriched);
+  }
 
   if (import.meta.env.DEV) {
     // eslint-disable-next-line no-console
-    console.debug('[analytics]', event, payload);
+    console.debug('[analytics]', event, enriched);
   }
 }
 
@@ -97,6 +121,9 @@ function parsePayload(raw: string | null | undefined): AnalyticsPayload {
 /** Escucha delegada para `[data-track]` + profundidad de scroll. */
 export function initAnalytics(): void {
   if (typeof window === 'undefined') return;
+
+  // Se resuelve antes que nada: el primer evento ya debe salir atribuido.
+  attribution = initAttribution();
 
   document.addEventListener(
     'click',

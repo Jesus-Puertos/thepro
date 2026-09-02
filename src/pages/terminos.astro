@@ -1,0 +1,135 @@
+---
+import LegalPage from '@/components/layout/LegalPage.astro';
+import { site, offer, platforms } from '@/data/site';
+---
+
+<LegalPage
+  kicker="Legal"
+  title="Términos y condiciones"
+  summary="Qué incluye la membresía de The Apex Prime, cómo se contrata y qué esperar del servicio."
+>
+  <section>
+    <h2>1. Quiénes somos</h2>
+    <p>
+      The Apex Prime es un programa independiente de coaching y formación para jugadores de
+      Apex Legends. <strong>No está afiliado, patrocinado ni respaldado por Electronic Arts
+      Inc. ni por Respawn Entertainment.</strong> Apex Legends y Apex Legends Global Series
+      son marcas de sus respectivos titulares.
+    </p>
+    <p>
+      Razón social, domicilio fiscal y RFC del responsable:
+      <span class="legal-pending">Por definir</span>
+    </p>
+  </section>
+
+  <section>
+    <h2>2. Qué incluye la membresía</h2>
+    <p>Al contratar la membresía obtienes acceso a:</p>
+    <ul>
+      {offer.includes.map((item) => <li>{item}</li>)}
+    </ul>
+    <p>
+      El programa funciona en {platforms.join(', ').replace(/, ([^,]*)$/, ' y $1')}.
+    </p>
+    <h3>Lo que el programa no promete</h3>
+    <p>
+      El servicio consiste en formación, análisis y acompañamiento.
+      <strong>No se garantiza alcanzar ningún rango, resultado competitivo ni mejora
+      concreta</strong>, ya que el progreso depende del tiempo, la constancia y las
+      circunstancias de cada jugador.
+    </p>
+  </section>
+
+  <section>
+    <h2>3. Precio y contratación</h2>
+    <p>
+      La membresía cuesta <strong>{offer.priceLabel} al mes</strong>. Puedes contratarla desde
+      la plataforma de pago o mediante los métodos alternativos descritos en la
+      <a href="/pagos">política de pagos</a>.
+    </p>
+    <p>
+      Con el pago directo desde la plataforma el acceso es inmediato o más rápido. Con PayPal
+      o transferencia necesitas enviar tu comprobante y el acceso puede tardar hasta 24 horas.
+    </p>
+    <h3>Renovación</h3>
+    <p>
+      Si la membresía se renueva de forma automática o requiere un pago manual cada mes:
+      <span class="legal-pending">Por definir</span>
+    </p>
+    <h3>Cancelación</h3>
+    <p>
+      Plazo, forma y efectos de la cancelación:
+      <span class="legal-pending">Por definir</span>
+    </p>
+    <h3>Devoluciones</h3>
+    <p>
+      Existencia, plazo y condiciones de devolución o garantía:
+      <span class="legal-pending">Por definir</span>
+    </p>
+  </section>
+
+  <section>
+    <h2>4. Uso del contenido</h2>
+    <p>
+      El acceso a la plataforma, a las sesiones y a las grabaciones es
+      <strong>personal e intransferible</strong>. No está permitido compartir las
+      credenciales, ni grabar, redistribuir o revender el material del programa.
+    </p>
+    <p>
+      Tiempo durante el cual las grabaciones permanecen disponibles:
+      <span class="legal-pending">Por definir</span>
+    </p>
+  </section>
+
+  <section>
+    <h2>5. Normas de la comunidad</h2>
+    <p>
+      El Discord del programa es un espacio de trabajo. Nos reservamos el derecho de retirar
+      el acceso, sin devolución del importe salvo lo que indique la política de devoluciones,
+      a quien incurra en acoso, discriminación, trampas en el juego, suplantación o difusión
+      del material del programa.
+    </p>
+  </section>
+
+  <section>
+    <h2>6. Disponibilidad del servicio</h2>
+    <p>
+      Las sesiones en vivo se imparten de lunes a viernes. Los horarios concretos y la
+      duración de cada sesión: <span class="legal-pending">Por definir</span>
+    </p>
+    <p>
+      Puede haber interrupciones puntuales por causas técnicas o de fuerza mayor. En ese caso
+      procuraremos avisar por el Discord del programa.
+    </p>
+  </section>
+
+  <section>
+    <h2>7. Datos personales</h2>
+    <p>
+      El tratamiento de tus datos se describe en el <a href="/privacidad">aviso de
+      privacidad</a>.
+    </p>
+  </section>
+
+  <section>
+    <h2>8. Modificaciones</h2>
+    <p>
+      Podemos actualizar estos términos. Los cambios relevantes se comunicarán por el Discord
+      del programa y por correo, y la versión vigente será siempre la publicada en esta
+      página.
+    </p>
+  </section>
+
+  <section>
+    <h2>9. Legislación aplicable</h2>
+    <p>
+      Ley aplicable y jurisdicción para la resolución de controversias:
+      <span class="legal-pending">Por definir</span>
+    </p>
+    <p>
+      Para cualquier aclaración, escríbenos a <a href={`mailto:${site.contactEmail}`}
+        >{site.contactEmail}</a
+      >.
+    </p>
+  </section>
+</LegalPage>

@@ -149,6 +149,7 @@ export default function MobileMenu({
             rel="noopener noreferrer"
             onClick={close}
             data-track="nav_cta_click"
+            data-checkout=""
             className="primary-button w-full"
           >
             {ctaLabel}

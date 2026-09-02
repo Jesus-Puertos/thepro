@@ -11,6 +11,7 @@ npm install
 npm run dev      # servidor de desarrollo
 npm run build    # astro check + build de producción
 npm run preview  # sirve dist/
+npm run test     # vitest (44 tests sobre las reglas del proyecto)
 ```
 
 ---
@@ -30,8 +31,8 @@ src/
 │   └── islands/            Los únicos componentes de React
 ├── data/                   Todo el contenido editorial y la oferta
 ├── layouts/MainLayout.astro  SEO, fuentes, JSON-LD, arranque de scripts
-├── lib/                    analytics.ts (eventos) y motion.ts (GSAP)
-├── pages/index.astro       Solo compone las secciones
+├── lib/                    analytics.ts · attribution.ts · motion.ts
+├── pages/                  index · 404 · robots.txt · 3 páginas legales
 ├── styles/                 global · typography · utilities · animations
 └── types/index.ts          Interfaces compartidas
 ```
@@ -133,9 +134,30 @@ ni políticas. Lo que falta está marcado con `TODO(pendiente)` y listado en
 
 ---
 
-## Analítica
+## Analítica y atribución
 
-Sin proveedor conectado: solo el contrato, listo para GA4, Meta Pixel o GTM.
+Ninguna etiqueta de terceros se carga si no existe su variable de entorno, así
+que en desarrollo la página no envía un solo byte fuera:
+
+```bash
+PUBLIC_GA4_ID=G-XXXXXXXXXX
+PUBLIC_META_PIXEL_ID=000000000000000
+```
+
+### Atribución
+
+El pago ocurre fuera del sitio, así que sin esto no hay forma de saber qué venta
+vino de Instagram y cuál de Facebook. `src/lib/attribution.ts` captura los
+parámetros de campaña, los guarda en `sessionStorage` con criterio de **primer
+toque** y los pega a los enlaces `[data-checkout]` — que `PrimaryButton` marca
+solo, comparando con `offer.checkoutUrl`, para que ningún CTA nuevo se quede sin
+atribuir por olvido. Cada evento sale ya enriquecido con la campaña.
+
+> ⚠️ La URL de checkout es un acortador. TinyURL suele reenviar la query string
+> al destino, pero no lo garantiza: para que la atribución sea fiable conviene
+> apuntar a la URL real de la plataforma de pago.
+
+### Eventos
 
 Los eventos se declaran en el marcado y los recoge una escucha delegada:
 
@@ -150,7 +172,44 @@ Todo evento se encola en `window.__apexPrimeEvents` y se reenvía a `dataLayer` 
 `gtag` si existen, así que una etiqueta instalada más tarde puede reproducir lo
 que pasó antes de cargarse. La profundidad de scroll (25/50/75/100) se mide sola.
 
+`checkout_start` y los CTA se traducen a eventos estándar de Meta
+(`InitiateCheckout`, `Lead`); el resto van como `trackCustom`.
+
 Ver `src/lib/analytics.ts`.
+
+---
+
+## Tests
+
+```bash
+npm run test
+```
+
+44 tests con Vitest que no comprueban redacción, sino **las reglas que se pueden
+romper sin darse cuenta** al editar un archivo de datos meses después: que
+ninguna FAQ pendiente se cuele en el JSON-LD, que ningún testimonio sin cita
+aparezca como spotlight, que las cifras sin verificar sigan marcadas, que cada
+diapositiva declare un modo de render válido, y que la atribución no se pierda
+ni se duplique.
+
+Están verificados por mutación: al hacer que `structuredFaq` devuelva todas las
+preguntas, fallan exactamente los dos tests que deben fallar.
+
+---
+
+## Páginas legales
+
+`/terminos`, `/privacidad` y `/pagos` existen y recogen **solo lo confirmado**.
+Todo lo demás sale marcado en dorado como «Por definir», visible en la propia
+página.
+
+Siguen en borrador: salen con `noindex`, fuera del sitemap, excluidas en
+`robots.txt` y con un aviso arriba. Al cerrarlas hay que poner `draft={false}`
+en cada página y quitar las reglas de `src/pages/robots.txt.ts` y del filtro del
+sitemap en `astro.config.mjs`.
+
+El aviso de privacidad se llama así, y no «política», porque es el instrumento
+que exige la LFPDPPP a un negocio mexicano.
 
 ---
 

@@ -1,0 +1,60 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import Container from '@/components/layout/Container.astro';
+import PrimaryButton from '@/components/ui/PrimaryButton.astro';
+import GhostText from '@/components/ui/GhostText.astro';
+import { navigation } from '@/data/navigation';
+import { site } from '@/data/site';
+---
+
+<MainLayout title={`Página no encontrada | ${site.name}`} noindex>
+  <section
+    class="relative isolate flex min-h-svh flex-col justify-center overflow-hidden pt-(--header-h) pb-20"
+  >
+    <div aria-hidden="true" class="tech-grid"></div>
+    <div aria-hidden="true" class="noise-layer"></div>
+    <div
+      aria-hidden="true"
+      class="glow-red top-1/2 left-1/2 h-[28rem] w-[42rem] -translate-x-1/2 -translate-y-1/2"
+    >
+    </div>
+    <GhostText text="404" class="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+
+    <Container class="relative">
+      <div class="flex max-w-2xl flex-col gap-7">
+        <p class="eyebrow tick-red">Error 404</p>
+
+        <h1 class="h1 text-white">
+          <span class="block">Esta ruta</span>
+          <span class="text-accent-red block">no existe.</span>
+        </h1>
+
+        <p class="lead max-w-xl">
+          El enlace que seguiste no lleva a ninguna parte. Vuelve al inicio y sigue desde
+          donde estabas.
+        </p>
+
+        <div class="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center">
+          <PrimaryButton href="/" class="w-full sm:w-auto">Volver al inicio</PrimaryButton>
+        </div>
+
+        <div class="mt-4 flex flex-col gap-4">
+          <div class="rule-tech w-40"></div>
+          <nav aria-label="Secciones de la página">
+            <ul class="flex flex-wrap gap-x-6 gap-y-2">
+              {
+                navigation.map((item) => (
+                  <li>
+                    <a class="nav-link" href={`/${item.href}`}>
+                      {item.label}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </Container>
+  </section>
+</MainLayout>

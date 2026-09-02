@@ -1,0 +1,131 @@
+---
+import LegalPage from '@/components/layout/LegalPage.astro';
+import { site } from '@/data/site';
+---
+
+<LegalPage
+  kicker="Legal"
+  title="Aviso de privacidad"
+  summary="Qué datos recogemos, para qué los usamos y cómo puedes ejercer tus derechos."
+>
+  <section>
+    <p>
+      Se titula «aviso de privacidad» y no «política de privacidad» porque es el instrumento
+      que exige la Ley Federal de Protección de Datos Personales en Posesión de los
+      Particulares (LFPDPPP), aplicable a un negocio mexicano.
+    </p>
+  </section>
+
+  <section>
+    <h2>1. Responsable de tus datos</h2>
+    <p>
+      Nombre o razón social, domicilio y datos de contacto del responsable:
+      <span class="legal-pending">Por definir</span>
+    </p>
+    <p>
+      La LFPDPPP exige identificar al responsable con nombre y domicilio; el correo por sí
+      solo no basta.
+    </p>
+  </section>
+
+  <section>
+    <h2>2. Qué datos recogemos</h2>
+    <h3>En esta página</h3>
+    <p>
+      Esta landing <strong>no tiene formularios</strong>: no te pedimos nombre, correo ni
+      teléfono para verla. Lo único que puede recogerse aquí son datos de navegación mediante
+      herramientas de analítica —páginas vistas, dispositivo aproximado y de qué campaña
+      llegaste—, y solo si esas herramientas están activadas.
+    </p>
+    <h3>Al contratar</h3>
+    <p>
+      El pago se procesa fuera de esta página, en la plataforma correspondiente o vía PayPal
+      o transferencia bancaria. Los datos que solicite cada medio de pago se rigen por sus
+      propios avisos de privacidad.
+    </p>
+    <p>
+      Para darte acceso al programa tratamos los datos que nos envíes: identificador de
+      juego, plataforma, usuario de Discord y comprobante de pago cuando aplique.
+    </p>
+    <p>
+      Relación completa y definitiva de datos tratados:
+      <span class="legal-pending">Por definir</span>
+    </p>
+  </section>
+
+  <section>
+    <h2>3. Para qué los usamos</h2>
+    <ul>
+      <li>Dar de alta tu acceso a la plataforma y al Discord.</li>
+      <li>Confirmar y dar seguimiento a tu pago.</li>
+      <li>Prestar el servicio de coaching y responder a tus dudas.</li>
+      <li>Avisarte de sesiones, cambios y recursos del programa.</li>
+      <li>Entender qué campañas funcionan, de forma agregada.</li>
+    </ul>
+    <p>
+      No vendemos tus datos. Si en algún momento quisiéramos usarlos con una finalidad
+      distinta a las anteriores, te lo pediríamos antes.
+    </p>
+  </section>
+
+  <section>
+    <h2>4. Con quién se comparten</h2>
+    <p>
+      Solo con los proveedores necesarios para prestar el servicio: la plataforma de cursos,
+      la pasarela de pago, Discord y, en su caso, las herramientas de analítica. Cada uno
+      trata los datos bajo su propio aviso.
+    </p>
+    <p>
+      Listado nominal de proveedores y transferencias:
+      <span class="legal-pending">Por definir</span>
+    </p>
+  </section>
+
+  <section>
+    <h2>5. Cookies y analítica</h2>
+    <p>
+      Esta página puede usar almacenamiento del navegador para recordar de qué campaña
+      llegaste y no perder esa referencia mientras navegas. Si las herramientas de analítica
+      están activas, también instalarán sus propias cookies.
+    </p>
+    <p>
+      Puedes bloquear o borrar cookies desde la configuración de tu navegador; la página
+      seguirá funcionando.
+    </p>
+  </section>
+
+  <section>
+    <h2>6. Tus derechos ARCO</h2>
+    <p>
+      Puedes solicitar el <strong>acceso</strong> a tus datos, su <strong>rectificación</strong>
+      si son inexactos, su <strong>cancelación</strong> cuando consideres que no son
+      necesarios, y <strong>oponerte</strong> a determinados usos. También puedes revocar tu
+      consentimiento en cualquier momento.
+    </p>
+    <p>
+      Para ejercerlos, escribe a <a href={`mailto:${site.contactEmail}`}
+        >{site.contactEmail}</a
+      > indicando qué derecho quieres ejercer y cómo prefieres que te respondamos.
+    </p>
+    <p>
+      Plazo de respuesta y documentación necesaria para acreditar tu identidad:
+      <span class="legal-pending">Por definir</span>
+    </p>
+  </section>
+
+  <section>
+    <h2>7. Cuánto tiempo los conservamos</h2>
+    <p>
+      Plazos de conservación por tipo de dato:
+      <span class="legal-pending">Por definir</span>
+    </p>
+  </section>
+
+  <section>
+    <h2>8. Cambios en este aviso</h2>
+    <p>
+      Cualquier modificación se publicará en esta misma página, y los cambios relevantes se
+      avisarán además por el Discord del programa.
+    </p>
+  </section>
+</LegalPage>

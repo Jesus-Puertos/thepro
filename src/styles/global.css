@@ -86,6 +86,38 @@
     color: var(--color-white);
   }
 
+  /* --- Barra de desplazamiento -------------------------------------------
+     Fina, sin flechas y sin riel visible. Se declaran las dos sintaxis: los
+     navegadores modernos usan las propiedades estándar y las ignoran las de
+     `::-webkit-`, que quedan solo para WebKit antiguo. */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(241 239 232 / 0.2) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track,
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    /* Borde transparente + `content-box`: deja aire alrededor del pulgar y lo
+       adelgaza sin recortar el área de arrastre. */
+    background-color: rgb(241 239 232 / 0.2);
+    background-clip: content-box;
+    border: 3px solid transparent;
+    border-radius: 999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(217 45 39 / 0.75);
+  }
+
   /* Foco visible y consistente en toda la página (brief: outline dorado). */
   :where(a, button, summary, input, [tabindex]):focus-visible {
     outline: 3px solid rgb(214 166 44 / 0.65);
