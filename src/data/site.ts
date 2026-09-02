@@ -10,8 +10,8 @@ export const site = {
   shortName: 'Apex Prime',
   tagline: 'Programa de coaching para Apex Legends',
   locale: 'es-MX',
-  // TODO(pendiente): dominio definitivo. También en `astro.config.mjs`.
-  url: 'https://theapexprime.com',
+  // Dominio público actual. Mantener sincronizado con `astro.config.mjs`.
+  url: 'https://thepro-nu.vercel.app',
   seo: {
     title: 'The Apex Prime | Coaching para mejorar en Apex Legends',
     description:

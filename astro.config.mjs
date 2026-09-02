@@ -4,9 +4,9 @@ import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
-// TODO(pendiente): sustituir por el dominio definitivo antes de publicar.
-// Se usa para canonical, Open Graph y sitemap.
-const SITE_URL = 'https://theapexprime.com';
+// Dominio público actual. Sustituirlo aquí cuando se conecte el dominio definitivo;
+// canonical, Open Graph y sitemap deben apuntar siempre a una URL que ya responda.
+const SITE_URL = 'https://thepro-nu.vercel.app';
 
 // https://astro.build/config
 export default defineConfig({
