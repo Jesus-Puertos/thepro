@@ -16,9 +16,10 @@
  * que un `clearProps` pueda reactivar.
  *
  * Marcado esperado:
- *  - `[data-hero-line]` dentro de `.line-mask` → revelado por línea.
  *  - `[data-reveal="up|fade|left|scale|rule"]` → revelado genérico.
- *  - `[data-hero]` → se anima en la línea de tiempo del hero, no con scroll.
+ *  - `[data-hero]` → NO lo toca este módulo: la entrada del hero es CSS puro
+ *    (ver `animations.css`), para que el titular no dependa de que GSAP
+ *    termine de descargarse. Se excluye del selector de revelados.
  *  - `[data-parallax="0.15"]` → parallax suave (solo puntero fino y ≥1024px).
  *
  * REGLA: `data-reveal` nunca puede aparecer dentro de una isla de React. Ver
@@ -76,7 +77,6 @@ export function initMotion(): void {
     ScrollTrigger.config({ ignoreMobileResize: true });
 
     const ctx = gsap.context(() => {
-      buildHeroTimeline();
       buildScrollReveals();
       buildParallax();
     });
@@ -98,46 +98,6 @@ export function initMotion(): void {
       // eslint-disable-next-line no-console
       console.error('[motion] animaciones desactivadas', error);
     }
-  }
-}
-
-function buildHeroTimeline(): void {
-  const lines = revealTargets('[data-hero-line]');
-  const items = revealTargets('[data-reveal][data-hero]');
-
-  if (lines.length === 0 && items.length === 0) return;
-
-  const tl = gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 0.1 });
-
-  if (lines.length > 0) {
-    gsap.set(lines, { yPercent: 110 });
-    markRevealed(lines);
-
-    tl.to(lines, {
-      yPercent: 0,
-      duration: 0.9,
-      stagger: 0.08,
-      onComplete: () => gsap.set(lines, { clearProps: 'transform' }),
-    });
-  }
-
-  if (items.length > 0) {
-    gsap.set(items, FROM_STATE);
-    markRevealed(items);
-
-    tl.to(
-      items,
-      {
-        opacity: 1,
-        x: 0,
-        y: 0,
-        scale: 1,
-        duration: 0.7,
-        stagger: 0.09,
-        onComplete: () => gsap.set(items, { clearProps: 'opacity,transform' }),
-      },
-      lines.length > 0 ? '-=0.6' : 0,
-    );
   }
 }
 
@@ -191,9 +151,7 @@ function buildScrollReveals(): void {
  */
 function scheduleSafetySweep(): void {
   window.setTimeout(() => {
-    const pending = revealTargets(
-      '[data-reveal]:not([data-revealed]), [data-hero-line]:not([data-revealed])',
-    );
+    const pending = revealTargets('[data-reveal]:not([data-hero]):not([data-revealed])');
 
     for (const element of pending) {
       if (element.getBoundingClientRect().top > window.innerHeight) continue;

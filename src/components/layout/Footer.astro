@@ -8,6 +8,10 @@ import { site, socials, legalLinks, disclaimer } from '@/data/site';
 import logo from '@assets/LOGO_alta_resolucion.png';
 
 const year = new Date().getFullYear();
+
+// Ver la nota en Header.astro: las anclas solo resuelven dentro de la home.
+const isHome = Astro.url.pathname === '/';
+const sectionHref = (hash: string): string => (isHome ? hash : `/${hash}`);
 ---
 
 <footer class="border-t border-(--color-border) bg-background relative overflow-hidden">
@@ -52,7 +56,7 @@ const year = new Date().getFullYear();
             navigation.map((item) => (
               <li>
                 <a
-                  href={item.href}
+                  href={sectionHref(item.href)}
                   class="text-white/70 hover:text-red text-sm transition-colors"
                 >
                   {item.label}

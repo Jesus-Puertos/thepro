@@ -1,74 +1,29 @@
 ---
-import { getImage } from 'astro:assets';
-
 import AnalyticsScripts from '@/components/layout/AnalyticsScripts.astro';
+import SeoHead, { type BreadcrumbItem } from '@/components/layout/SeoHead.astro';
 import Header from '@/components/layout/Header.astro';
 import Footer from '@/components/layout/Footer.astro';
-import { site, offer } from '@/data/site';
-import { structuredFaq } from '@/data/faq';
 
 import '@/styles/global.css';
-import ogSource from '../../assets/og-the-apex-prime.png';
 
 interface Props {
   title?: string;
   description?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  imageAlt?: string;
+  canonicalPath?: string;
+  author?: string;
+  publishedDate?: string;
+  type?: 'website' | 'article';
+  keywords?: string;
   /** Para páginas legales en borrador y la 404. */
   noindex?: boolean;
+  breadcrumbs?: BreadcrumbItem[];
+  isHomePage?: boolean;
 }
 
-const {
-  title = site.seo.title,
-  description = site.seo.description,
-  noindex = false,
-} = Astro.props;
-
-const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
-
-// Portada social dedicada; Astro la normaliza al formato Open Graph 1200×630.
-const ogImage = await getImage({
-  src: ogSource,
-  width: 1200,
-  height: 630,
-  fit: 'cover',
-  position: 'center',
-  format: 'jpg',
-});
-const ogImageUrl = new URL(ogImage.src, Astro.site ?? site.url).href;
-
-/**
- * Datos estructurados.
- * Solo se emite información confirmada: precio, oferta y las preguntas
- * frecuentes con respuesta cerrada. Sin `aggregateRating` ni `Review`, porque
- * todavía no hay reseñas verificables (context.md §16 y §18).
- */
-const productSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Product',
-  name: site.name,
-  description: site.seo.description,
-  brand: { '@type': 'Brand', name: site.name },
-  category: 'Coaching de videojuegos',
-  image: [ogImageUrl],
-  offers: {
-    '@type': 'Offer',
-    url: offer.checkoutUrl,
-    price: String(offer.price),
-    priceCurrency: offer.currency,
-    availability: 'https://schema.org/InStock',
-    category: 'Suscripción mensual',
-  },
-};
-
-const faqSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: structuredFaq.map((item) => ({
-    '@type': 'Question',
-    name: item.question,
-    acceptedAnswer: { '@type': 'Answer', text: item.answer },
-  })),
-};
+const seoProps = Astro.props as Props;
 ---
 
 <!doctype html>
@@ -78,30 +33,11 @@ const faqSchema = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
 
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex, follow" />}
+    <SeoHead {...seoProps} />
 
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="theme-color" content="#050505" />
     <meta name="color-scheme" content="dark" />
-
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content={site.name} />
-    <meta property="og:locale" content="es_MX" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={ogImageUrl} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={`The Pro, coach de ${site.name}`} />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImageUrl} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -131,12 +67,6 @@ const faqSchema = {
 
     <AnalyticsScripts />
 
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(productSchema)} />
-    {
-      faqSchema.mainEntity.length > 0 && (
-        <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
-      )
-    }
   </head>
 
   <body>

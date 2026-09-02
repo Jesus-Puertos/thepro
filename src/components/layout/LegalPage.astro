@@ -23,7 +23,15 @@ interface Props {
 const { title, kicker, summary, draft = true } = Astro.props as Props;
 ---
 
-<MainLayout title={`${title} | ${site.name}`} description={summary} noindex={draft}>
+<MainLayout
+  title={`${title} | ${site.name}`}
+  description={summary}
+  noindex={draft}
+  breadcrumbs={[
+    { name: 'Inicio', item: '/' },
+    { name: title },
+  ]}
+>
   <article class="relative overflow-hidden py-20 lg:py-28">
     <div aria-hidden="true" class="tech-grid opacity-50"></div>
 

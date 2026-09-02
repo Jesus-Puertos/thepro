@@ -58,8 +58,15 @@ const slides: CarouselSlide[] = await Promise.all(
     servidor, así que el contenido está completo aunque falle el JavaScript.
   */}
   <div class="relative mt-12 lg:mt-16">
+    {/*
+      `rootMargin` generoso a propósito: en escritorio la isla sustituye la
+      rejilla apilada por el recorrido de 288vh, y eso desplaza todo lo que
+      viene después. Hidratando bien antes de que la sección entre en pantalla,
+      el reajuste ocurre fuera de la vista en lugar de dar un tirón delante del
+      usuario.
+    */}
     <PillarsScroll
-      client:visible
+      client:visible={{ rootMargin: '1200px' }}
       slides={slides}
       benefits={[...benefits]}
     />

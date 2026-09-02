@@ -9,8 +9,8 @@ interface PillarsScrollProps {
   benefits: Benefit[];
 }
 
-/** Alto de scroll reservado a cada pilar, en vh. */
-const STEP_VH = 85;
+/** Alto de scroll reservado a cada pilar, en vh. Cuatro pilares × 72 = 288vh. */
+const STEP_VH = 72;
 
 const EASE = 'cubic-bezier(0.4, 0, 0.2, 1)';
 
@@ -84,6 +84,14 @@ export default function PillarsScroll({ slides, benefits }: PillarsScrollProps) 
           setActive((current) => (current === index ? current : index));
         },
       });
+
+      /*
+       * Al pasar al modo mejorado, esta sección cambia de ~1300 px a 288vh.
+       * Todo lo que hay debajo se desplaza, y los ScrollTrigger que creó
+       * `motion.ts` se quedan con posiciones calculadas antes del cambio: los
+       * revelados dispararían a destiempo. Un refresco global lo recalcula todo.
+       */
+      requestAnimationFrame(() => ScrollTrigger.refresh());
     })();
 
     return () => {
@@ -128,17 +136,21 @@ export default function PillarsScroll({ slides, benefits }: PillarsScrollProps) 
         className="sticky top-0 flex h-svh flex-col overflow-hidden pt-(--header-h)"
         style={{ '--sub': 0 } as React.CSSProperties}
       >
-        {/* Halo de acento, sincronizado con el pilar activo. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 right-[18%] h-136 w-136 -translate-y-1/2 rounded-full"
-          style={{
-            background: current
-              ? `radial-gradient(circle, rgb(${current.accent} / 0.2) 0%, rgb(${current.accent} / 0.05) 46%, transparent 72%)`
-              : undefined,
-            transition: `background 650ms ${EASE}`,
-          }}
-        />
+        {/* Halo de acento: un div por pilar cruzando opacidades.
+            Transicionar la propiedad `background` no sirve — los degradados no
+            interpolan y el color pegaría un salto seco en vez de fundirse. */}
+        {slides.map((slide, index) => (
+          <div
+            key={slide.id}
+            aria-hidden="true"
+            className="pointer-events-none absolute top-1/2 right-[18%] h-136 w-136 -translate-y-1/2 rounded-full"
+            style={{
+              background: `radial-gradient(circle, rgb(${slide.accent} / 0.2) 0%, rgb(${slide.accent} / 0.05) 46%, transparent 72%)`,
+              opacity: index === active ? 1 : 0,
+              transition: `opacity 650ms ${EASE}`,
+            }}
+          />
+        ))}
 
         <div className="relative mx-auto grid w-full max-w-content flex-1 grid-cols-1 items-center gap-10 px-5 sm:px-8 lg:grid-cols-12 lg:px-10">
           {/* --- Panel de texto: los cuatro apilados en la misma celda --- */}
@@ -209,14 +221,22 @@ export default function PillarsScroll({ slides, benefits }: PillarsScrollProps) 
               rectángulo vacío. Aquí cada pieza sangra y se funde con el negro. */}
           <div className="relative h-[52vh] max-h-[34rem] lg:col-span-7 lg:h-[64vh] lg:max-h-[42rem]">
             {/* La palabra va DETRÁS de la imagen. Como las piezas se disuelven
-                por abajo, asoma por la banda inferior en las cuatro. */}
-            <span
-              key={current?.ghost}
-              aria-hidden="true"
-              className="ghost-text ghost-text--sm ghost-text--outline absolute bottom-[2%] left-1/2 z-0 -translate-x-1/2"
-            >
-              {current?.ghost}
-            </span>
+                por abajo, asoma por la banda inferior en las cuatro.
+                Se apilan las cuatro y se cruzan opacidades: con `key` React
+                remontaba el nodo y la palabra entraba de golpe. */}
+            {slides.map((slide, index) => (
+              <span
+                key={slide.id}
+                aria-hidden="true"
+                className="ghost-text ghost-text--sm ghost-text--outline absolute bottom-[2%] left-1/2 z-0 -translate-x-1/2"
+                style={{
+                  opacity: index === active ? 1 : 0,
+                  transition: `opacity 650ms ${EASE}`,
+                }}
+              >
+                {slide.ghost}
+              </span>
+            ))}
 
             {slides.map((slide, index) => {
               const isActive = index === active;
@@ -245,12 +265,19 @@ export default function PillarsScroll({ slides, benefits }: PillarsScrollProps) 
                   style={{
                     objectPosition: isCutout ? undefined : slide.focus,
                     opacity: isActive ? 1 : 0,
-                    // El zoom se va soltando conforme avanza el scroll dentro
-                    // del paso: liga la imagen al movimiento sin dar tumbos.
+                    // El zoom se suelta conforme avanza el scroll dentro del paso.
+                    // La activa NO lleva transición en `transform`: el valor ya
+                    // cambia de forma continua con el scroll, y una transición
+                    // encima lo dejaba persiguiendo un objetivo móvil con 900 ms
+                    // de retraso — de ahí la sensación de blandura.
+                    // La inactiva sí la lleva, para volver a su escala sin saltar
+                    // mientras se desvanece.
                     transform: isActive
-                      ? 'scale(calc(1.04 - var(--sub) * 0.04))'
+                      ? 'scale(calc(1.06 - var(--sub) * 0.06))'
                       : 'scale(1.06)',
-                    transition: `opacity 650ms ${EASE}, transform 900ms ${EASE}`,
+                    transition: isActive
+                      ? `opacity 650ms ${EASE}`
+                      : `opacity 650ms ${EASE}, transform 650ms ${EASE}`,
                     filter: isCutout
                       ? 'contrast(1.06) saturate(0.85) brightness(0.95)'
                       : 'contrast(1.08) saturate(0.92) brightness(0.9)',

@@ -8,6 +8,18 @@ import { navigation, primaryCtaLabel } from '@/data/navigation';
 import { site, offer } from '@/data/site';
 
 import logo from '@assets/LOGO_alta_resolucion.png';
+
+/**
+ * Las anclas del menú apuntan a secciones de la home. Desde `/terminos` o la
+ * 404 un `#incluye` a secas no lleva a ninguna parte, así que fuera de la home
+ * se prefijan con `/`.
+ *
+ * En la home se dejan como fragmento puro para que el navegador haga scroll en
+ * el mismo documento: con `/#incluye` recargaría la página y perdería los
+ * parámetros de campaña de la URL.
+ */
+const isHome = Astro.url.pathname === '/';
+const sectionHref = (hash: string): string => (isHome ? hash : `/${hash}`);
 ---
 
 <header
@@ -20,7 +32,7 @@ import logo from '@assets/LOGO_alta_resolucion.png';
     class="flex h-(--header-h) items-center justify-between gap-3"
   >
     <a
-      href="#top"
+      href={isHome ? '#top' : '/'}
       class="group flex shrink-0 items-center gap-2.5"
       aria-label={`${site.name} — inicio`}
     >
@@ -46,7 +58,7 @@ import logo from '@assets/LOGO_alta_resolucion.png';
       {
         navigation.map((item) => (
           <li>
-            <a class="nav-link" href={item.href}>
+            <a class="nav-link" href={sectionHref(item.href)}>
               {item.label}
             </a>
           </li>
@@ -73,7 +85,7 @@ import logo from '@assets/LOGO_alta_resolucion.png';
           es HTML estático, así que la conversión nunca espera a esta isla. */}
       <MobileMenu
         client:idle
-        items={[...navigation]}
+        items={navigation.map((item) => ({ ...item, href: sectionHref(item.href) }))}
         checkoutUrl={offer.checkoutUrl}
         ctaLabel={primaryCtaLabel}
         priceLabel={offer.priceInline}
